@@ -14,7 +14,13 @@ namespace SimpleVLF
             
         }
 
-        private void newToolStripButton_Click(object sender, EventArgs e)
+        private void SVLF_Load(object sender, EventArgs e)
+        {
+            toolStrip1.Renderer = Antiufo.Controls.Windows7Renderer.Instance;
+            menuStrip1.Renderer = Antiufo.Controls.Windows7Renderer.Instance;
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
         {
             Count += 1;
             var text = string.Format("Plot {0}", Count);
@@ -24,12 +30,6 @@ namespace SimpleVLF
             };
 
             form2.Show();
-        }
-
-        private void SVLF_Load(object sender, EventArgs e)
-        {
-            toolStrip1.Renderer = Antiufo.Controls.Windows7Renderer.Instance;
-            menuStrip1.Renderer = Antiufo.Controls.Windows7Renderer.Instance;
         }
     }
 }

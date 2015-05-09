@@ -61,6 +61,11 @@
     <Compile Include="PlotForm.Designer.cs">
       <DependentUpon>PlotForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SVLF.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,14 +79,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="SVLF.resx">
       <DependentUpon>SVLF.cs</DependentUpon>
     </EmbeddedResource>
@@ -102,6 +102,54 @@
       <Project>{a5dae67b-a6d6-400c-b598-9f87b954b702}</Project>
       <Name>Windows7Renderer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fill-medium-090.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fill-medium-270.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layer-resize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\script-attribute-f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\script-attribute-k.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\system-monitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\table-heatmap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\calculator-scientific.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\table.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application-resize-full.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application-tile-horizontal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application-tile-vertical.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\applications-blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application-wave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cross-button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\information-balloon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
