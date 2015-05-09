@@ -15,7 +15,7 @@ namespace SimpleVLF
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new S_VLF());
+            Application.Run(new SVLF());
         }
     }
 }
