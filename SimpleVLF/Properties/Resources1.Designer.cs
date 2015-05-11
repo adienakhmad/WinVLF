@@ -113,6 +113,16 @@ namespace SimpleVLF.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap applications_stack {
+            get {
+                object obj = ResourceManager.GetObject("applications_stack", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap calculator_scientific {
             get {
                 object obj = ResourceManager.GetObject("calculator_scientific", resourceCulture);
@@ -133,6 +143,16 @@ namespace SimpleVLF.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap cross_script {
+            get {
+                object obj = ResourceManager.GetObject("cross_script", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap fill_medium_090 {
             get {
                 object obj = ResourceManager.GetObject("fill_medium_090", resourceCulture);
@@ -146,6 +166,16 @@ namespace SimpleVLF.Properties {
         internal static System.Drawing.Bitmap fill_medium_270 {
             get {
                 object obj = ResourceManager.GetObject("fill_medium_270", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap function {
+            get {
+                object obj = ResourceManager.GetObject("function", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -186,6 +216,16 @@ namespace SimpleVLF.Properties {
         internal static System.Drawing.Bitmap script_attribute_k {
             get {
                 object obj = ResourceManager.GetObject("script_attribute_k", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap script_attribute_m {
+            get {
+                object obj = ResourceManager.GetObject("script_attribute_m", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

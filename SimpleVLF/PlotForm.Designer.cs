@@ -33,7 +33,7 @@
             // 
             // plotView1
             // 
-            this.plotView1.BackColor = System.Drawing.Color.White;
+            this.plotView1.BackColor = System.Drawing.Color.WhiteSmoke;
             this.plotView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.plotView1.Location = new System.Drawing.Point(0, 0);
             this.plotView1.Name = "plotView1";
