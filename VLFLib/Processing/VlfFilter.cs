@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VLFLib.Data;
 
-namespace VLFLib.Filter
+namespace VLFLib.Processing
 {
     internal static class VlfFilter
     {

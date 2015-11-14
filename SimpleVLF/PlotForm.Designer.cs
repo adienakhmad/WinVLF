@@ -33,7 +33,7 @@
             // 
             // plotView1
             // 
-            this.plotView1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.plotView1.BackColor = System.Drawing.Color.White;
             this.plotView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.plotView1.Location = new System.Drawing.Point(0, 0);
             this.plotView1.Name = "plotView1";
@@ -44,6 +44,7 @@
             this.plotView1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
             this.plotView1.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
             this.plotView1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            this.plotView1.Resize += new System.EventHandler(this.plotView1_Resize);
             // 
             // PlotForm
             // 
@@ -57,7 +58,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "PlotForm";
+            this.Text = "Plot";
             this.Load += new System.EventHandler(this.PlotForm_Load);
             this.ResumeLayout(false);
 

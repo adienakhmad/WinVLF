@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VLFLib</RootNamespace>
-    <AssemblyName>vlflib</AssemblyName>
+    <AssemblyName>VLFLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -47,7 +47,7 @@
     <Compile Include="Data\KarousHjeltData.cs" />
     <Compile Include="Data\TiltData.cs" />
     <Compile Include="Data\VlfDataReader.cs" />
-    <Compile Include="Filter\VlfFilter.cs" />
+    <Compile Include="Processing\VlfFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
