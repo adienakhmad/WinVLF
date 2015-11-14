@@ -43,7 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Data\FraserData.cs" />
+    <Compile Include="Data\KarousHjeltData.cs" />
+    <Compile Include="Data\TiltData.cs" />
+    <Compile Include="Data\VlfDataReader.cs" />
+    <Compile Include="Filter\VlfFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

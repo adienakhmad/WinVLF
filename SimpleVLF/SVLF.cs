@@ -23,7 +23,7 @@ namespace SimpleVLF
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
             Count += 1;
-            var text = string.Format("Plot {0}", Count);
+            var text = $"Plot {Count}";
             var form2 = new PlotForm(text)
             {
                 MdiParent = this

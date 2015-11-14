@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleVLF", "SimpleVLF\SimpleVLF.csproj", "{59A301E3-A506-4BDC-A298-C2F95175A13A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLFLib", "VLFLib\VLFLib.csproj", "{0A24E2FE-6679-4D5A-82E3-C7691CBB3409}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLFProcessing", "VLFLib\VLFProcessing.csproj", "{0A24E2FE-6679-4D5A-82E3-C7691CBB3409}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows7Renderer", "Windows7Renderer\Windows7Renderer.csproj", "{A5DAE67B-A6D6-400C-B598-9F87B954B702}"
 EndProject
