@@ -43,7 +43,7 @@
             this.karousHjeltFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tsFraserFilter = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.tsKarousHjelt = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsLayout = new System.Windows.Forms.ToolStripDropDownButton();
             this.cascadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +103,7 @@
             this.tsFilter,
             this.toolStripButton1,
             this.tsFraserFilter,
-            this.toolStripButton3,
+            this.tsKarousHjelt,
             this.toolStripSeparator2,
             this.tsLayout});
             this.tsToolBar.Location = new System.Drawing.Point(0, 24);
@@ -208,13 +208,14 @@
             this.tsFraserFilter.Text = "Fraser Filter";
             this.tsFraserFilter.Click += new System.EventHandler(this.tsFraserFilter_Click);
             // 
-            // toolStripButton3
+            // tsKarousHjelt
             // 
-            this.toolStripButton3.Image = global::SimpleVLF.Properties.Resources.script_attribute_k;
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(120, 22);
-            this.toolStripButton3.Text = "Karous Hjelt Filter";
+            this.tsKarousHjelt.Image = global::SimpleVLF.Properties.Resources.script_attribute_k;
+            this.tsKarousHjelt.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsKarousHjelt.Name = "tsKarousHjelt";
+            this.tsKarousHjelt.Size = new System.Drawing.Size(120, 22);
+            this.tsKarousHjelt.Text = "Karous Hjelt Filter";
+            this.tsKarousHjelt.Click += new System.EventHandler(this.tsKarousHjelt_Click);
             // 
             // toolStripSeparator2
             // 
@@ -616,7 +617,7 @@
         private System.Windows.Forms.ToolStripMenuItem karousHjeltFilterToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton tsFraserFilter;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton tsKarousHjelt;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

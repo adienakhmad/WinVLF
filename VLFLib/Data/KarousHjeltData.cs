@@ -8,19 +8,24 @@ namespace VLFLib.Data
         public float Spacing;
         public bool IsNormalized;
         public float SkinDepth;
-        private float[] _distanceArray;
-        private float[] _depthArray;
-        private float[] _karousHjeltArray;
+        public int DepthLevel;
 
-        public KarousHjeltData(string name, float spacing, float skindepth, float[] distArray, float[] depthArray,
+        public float[] DistanceArray { get; }
+
+        public float[] DepthArray { get; }
+
+        public float[] KarousHjeltArray { get; }
+
+        public KarousHjeltData(string name, float spacing, float skindepth, int dlevel,float[] distArray, float[] depthArray,
             float[] kharray)
         {
             Name = name;
             Spacing = spacing;
             SkinDepth = skindepth;
-            _distanceArray = distArray;
-            _depthArray = depthArray;
-            _karousHjeltArray = kharray;
+            DepthLevel = dlevel;
+            DistanceArray = distArray;
+            DepthArray = depthArray;
+            KarousHjeltArray = kharray;
 
             if (skindepth > 0)
             {

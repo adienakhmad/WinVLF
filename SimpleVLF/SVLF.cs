@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 using Antiufo.Controls;
 using OxyPlot.Axes;
@@ -224,6 +225,38 @@ namespace SimpleVLF
             // Plot the result
             var form2 = new ChartPlot(item.Name, fraser) {MdiParent = this};
             form2.Show();
+        }
+
+        private void tsKarousHjelt_Click(object sender, EventArgs e)
+        {
+            if (listViewRaw.SelectedItems.Count == 0)
+            {
+                MessageBox.Show(@"You have not selected any data.");
+                return;
+            }
+
+            var tiltData = listViewRaw.SelectedItems[0].Tag as TiltData;
+            if (tiltData != null && tiltData.Count < 6)
+            {
+                MessageBox.Show(@"There should be minimum of 7 data for this filter to work.");
+                return;
+            }
+
+            var kh = VlfFilter.KarousHjelt(tiltData, 0);
+            var name = FindUniqeName(listViewRaw.SelectedItems[0].Name, listViewKH);
+            var item = new ListViewItem()
+            {
+                Name = Name,
+                Text = Text,
+                Tag = kh
+            };
+            item.SubItems.Add(kh.DepthArray.Min().ToString(CultureInfo.InvariantCulture));
+            item.SubItems.Add(kh.Spacing.ToString(CultureInfo.InvariantCulture));
+            item.SubItems.Add(kh.SkinDepth.ToString(CultureInfo.InvariantCulture));
+            listViewKH.Items.Add(item);
+
+            
+
         }
     }
 }

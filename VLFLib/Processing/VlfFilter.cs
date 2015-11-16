@@ -90,7 +90,7 @@ namespace VLFLib.Processing
                 }
             }
 
-            return new KarousHjeltData(raw.Name,raw.Spacing,skindepth,distList.ToArray(),depthList.ToArray(),khList.ToArray());
+            return new KarousHjeltData(raw.Name,raw.Spacing,skindepth,depthStep, distList.ToArray(),depthList.ToArray(),khList.ToArray());
         }
     }
 }
