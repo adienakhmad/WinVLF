@@ -2,17 +2,21 @@
 
 namespace VLFLib.Data
 {
-    class FraserData
+    public class FraserData
     {
         public string Name;
+        public int Count;
+        public float Spacing;
         public float[] Distances;
-        public float[] Data;
+        public float[] FraserValue;
 
-        internal FraserData(string name, float[] distances, float[] data)
+        internal FraserData(string name, int count, float spacing, float[] distances, float[] fraserValue)
         {
             Name = name;
+            Count = count;
+            Spacing = spacing;
             Distances = distances;
-            Data = data;
+            FraserValue = fraserValue;
         }
 
         public void Export(string filename)

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using VLFLib.Data;
 
 namespace VLFLib.Processing
 {
-    internal static class VlfFilter
+    public static class VlfFilter
     {
         public static FraserData Fraser(TiltData raw)
         {
             var count = raw.Count;
-            var fraserDist = new float[count];
-            var fraserVal = new float[count];
+            var fraserDist = new float[count - 3];
+            var fraserVal = new float[count - 3];
 
             for (var i = 0; i < count - 3; i++)
             {
@@ -24,10 +25,13 @@ namespace VLFLib.Processing
                 }
 
                 fraserDist[i] = distanceInput.Average();
-                fraserVal[i] = valueInput[0] + valueInput[1] - valueInput[2] - valueInput[3];
+                fraserVal[i] = (valueInput[0] + valueInput[1] - valueInput[2] - valueInput[3])/4;
             }
 
-            return new FraserData(raw.Name, fraserDist, fraserVal);
+            Debug.Write("Fraser count: ");
+            Debug.WriteLine(count-3);
+
+            return new FraserData(raw.Name, count-3, raw.Spacing, fraserDist, fraserVal);
         }
 
         public static KarousHjeltData KarousHjelt(TiltData raw, float skindepth)

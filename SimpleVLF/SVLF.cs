@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using Antiufo.Controls;
+using OxyPlot.Axes;
 using VLFLib.Data;
+using VLFLib.Processing;
 
 namespace SimpleVLF
 {
@@ -24,7 +27,6 @@ namespace SimpleVLF
 
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            
         }
 
         private void maximizeAllToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -114,18 +116,8 @@ namespace SimpleVLF
                 MessageBox.Show(@"An error has occured on your file. Please check your file.");
                 return;
             }
-            
-            // Find unique name if there is duplicate.
-            var num = 2;
-            var newname = input.Name;
 
-            while (listViewRaw.Items.ContainsKey(newname))
-            {
-                newname = $"{input.Name}({num})";
-                num++;
-            }
-
-            // end of finding unique name
+            var newname = FindUniqeName(input.Name, listViewRaw);
 
             var item = new ListViewItem {Text = newname, Name = newname};
             item.SubItems.Add(input.Count.ToString());
@@ -133,6 +125,12 @@ namespace SimpleVLF
             item.Tag = input;
             if (!input.IsAscending()) item.BackColor = Color.Orange;
             listViewRaw.Items.Add(item);
+
+            var form2 = new ChartPlot(item.Name, input)
+            {
+                MdiParent = this
+            };
+            form2.Show();
         }
 
         private void tsViewTable_Click(object sender, EventArgs e)
@@ -141,19 +139,91 @@ namespace SimpleVLF
 
         private void tsPlotChart_Click(object sender, EventArgs e)
         {
-            var selected = listViewRaw.SelectedItems[0];
-            if (selected == null) return;
-            var form2 = new PlotForm(selected.Name,selected.Tag as TiltData)
+            if (listViewRaw.Focused)
             {
-                MdiParent = this
-            };
+                if (listViewRaw.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show(@"You have not selected any data.");
+                    return;
+                }
 
-            form2.Show();
+                var selected = listViewRaw.SelectedItems[0];
+
+                var form2 = new ChartPlot(selected.Name, selected.Tag as TiltData)
+                {
+                    MdiParent = this
+                };
+
+                form2.Show();
+            }
+
+            else if (listViewFraser.Focused)
+            {
+                if (listViewFraser.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show(@"You have not selected any data.");
+                    return;
+                }
+
+                var selected = listViewFraser.SelectedItems[0];
+
+                var form2 = new ChartPlot(selected.Name, selected.Tag as FraserData)
+                {
+                    MdiParent = this
+                };
+
+                form2.Show();
+            }
+
+            else
+            {
+                MessageBox.Show(@"There is nothing to plot");
+            }
+            
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void tsFraserFilter_Click(object sender, EventArgs e)
+        {
+            if (listViewRaw.SelectedItems.Count == 0)
+            {
+                MessageBox.Show(@"You have not selected any data.");
+                return;
+            }
+
+            var tiltData = listViewRaw.SelectedItems[0].Tag as TiltData;
+            if (tiltData != null && tiltData.Count < 4)
+            {
+                MessageBox.Show(@"There should be minimum of 4 data for this filter to work.");
+                return;
+            }
+
+            // Do Fraser Filtering
+            var fraser = VlfFilter.Fraser(tiltData);
+
+            // Create a new listview item to be added to ListViewFraser
+            var name = FindUniqeName(listViewRaw.SelectedItems[0].Name, listViewFraser);
+            var item = new ListViewItem
+            {
+                Name = name,
+                Text = name,
+                Tag = fraser
+            };
+
+            item.SubItems.Add(fraser.Count.ToString());
+            item.SubItems.Add(fraser.Spacing.ToString(CultureInfo.InvariantCulture));
+
+            listViewFraser.Items.Add(item);
+
+            // end of creating new item to be added to ListViewFraser
+
+            // Plot the result
+            var form2 = new ChartPlot(item.Name, fraser) {MdiParent = this};
+            form2.Show();
         }
     }
 }

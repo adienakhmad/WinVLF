@@ -1,6 +1,6 @@
 ﻿namespace SimpleVLF
 {
-    partial class PlotForm
+    partial class ChartPlot
     {
         /// <summary>
         /// Required designer variable.
@@ -33,12 +33,12 @@
             // 
             // plotView1
             // 
-            this.plotView1.BackColor = System.Drawing.Color.White;
+            this.plotView1.BackColor = System.Drawing.SystemColors.Window;
             this.plotView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.plotView1.Location = new System.Drawing.Point(0, 0);
             this.plotView1.Name = "plotView1";
             this.plotView1.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.plotView1.Size = new System.Drawing.Size(790, 323);
+            this.plotView1.Size = new System.Drawing.Size(805, 323);
             this.plotView1.TabIndex = 0;
             this.plotView1.Text = "plotView1";
             this.plotView1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
@@ -46,19 +46,17 @@
             this.plotView1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
             this.plotView1.Resize += new System.EventHandler(this.plotView1_Resize);
             // 
-            // PlotForm
+            // ChartPlot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(805, 323);
             this.Controls.Add(this.plotView1);
-            this.Name = "PlotForm";
-            this.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
+            this.Name = "ChartPlot";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "Plot";
             this.Load += new System.EventHandler(this.PlotForm_Load);
             this.ResumeLayout(false);
 

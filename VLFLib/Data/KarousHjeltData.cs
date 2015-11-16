@@ -2,7 +2,7 @@
 
 namespace VLFLib.Data
 {
-    class KarousHjeltData
+    public class KarousHjeltData
     {
         public string Name;
         public float Spacing;
@@ -21,6 +21,11 @@ namespace VLFLib.Data
             _distanceArray = distArray;
             _depthArray = depthArray;
             _karousHjeltArray = kharray;
+
+            if (skindepth > 0)
+            {
+                IsNormalized = true;
+            }
 
         }
 

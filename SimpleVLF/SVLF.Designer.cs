@@ -42,7 +42,7 @@
             this.fraserFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.karousHjeltFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.tsFraserFilter = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsLayout = new System.Windows.Forms.ToolStripDropDownButton();
@@ -102,7 +102,7 @@
             this.tsResample,
             this.tsFilter,
             this.toolStripButton1,
-            this.toolStripButton2,
+            this.tsFraserFilter,
             this.toolStripButton3,
             this.toolStripSeparator2,
             this.tsLayout});
@@ -199,13 +199,14 @@
             this.toolStripButton1.Size = new System.Drawing.Size(143, 22);
             this.toolStripButton1.Text = "Moving Average Filter";
             // 
-            // toolStripButton2
+            // tsFraserFilter
             // 
-            this.toolStripButton2.Image = global::SimpleVLF.Properties.Resources.script_attribute_f;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(87, 22);
-            this.toolStripButton2.Text = "Fraser Filter";
+            this.tsFraserFilter.Image = global::SimpleVLF.Properties.Resources.script_attribute_f;
+            this.tsFraserFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsFraserFilter.Name = "tsFraserFilter";
+            this.tsFraserFilter.Size = new System.Drawing.Size(87, 22);
+            this.tsFraserFilter.Text = "Fraser Filter";
+            this.tsFraserFilter.Click += new System.EventHandler(this.tsFraserFilter_Click);
             // 
             // toolStripButton3
             // 
@@ -343,7 +344,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -366,7 +367,7 @@
             // 
             this.aboutToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.information_balloon;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
             // mdiClientController1
@@ -376,7 +377,7 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 698);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 659);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1093, 22);
             this.statusStrip1.TabIndex = 9;
@@ -395,7 +396,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 49);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(344, 649);
+            this.panel1.Size = new System.Drawing.Size(344, 610);
             this.panel1.TabIndex = 10;
             // 
             // label2
@@ -420,7 +421,7 @@
             this.listViewRaw.HideSelection = false;
             this.listViewRaw.Location = new System.Drawing.Point(12, 22);
             this.listViewRaw.Name = "listViewRaw";
-            this.listViewRaw.Size = new System.Drawing.Size(320, 226);
+            this.listViewRaw.Size = new System.Drawing.Size(320, 187);
             this.listViewRaw.TabIndex = 23;
             this.listViewRaw.UseCompatibleStateImageBehavior = false;
             this.listViewRaw.View = System.Windows.Forms.View.Details;
@@ -444,7 +445,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 251);
+            this.label1.Location = new System.Drawing.Point(9, 212);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 13);
             this.label1.TabIndex = 21;
@@ -462,7 +463,7 @@
             this.listViewFraser.HideSelection = false;
             this.listViewFraser.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1});
-            this.listViewFraser.Location = new System.Drawing.Point(12, 267);
+            this.listViewFraser.Location = new System.Drawing.Point(12, 228);
             this.listViewFraser.MultiSelect = false;
             this.listViewFraser.Name = "listViewFraser";
             this.listViewFraser.Size = new System.Drawing.Size(320, 180);
@@ -489,7 +490,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 450);
+            this.label3.Location = new System.Drawing.Point(9, 411);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(101, 13);
             this.label3.TabIndex = 20;
@@ -504,7 +505,7 @@
             this.columnHeader9,
             this.columnHeader10});
             this.listViewKH.ContextMenuStrip = this.cmListView;
-            this.listViewKH.Location = new System.Drawing.Point(12, 466);
+            this.listViewKH.Location = new System.Drawing.Point(12, 427);
             this.listViewKH.Name = "listViewKH";
             this.listViewKH.Size = new System.Drawing.Size(320, 180);
             this.listViewKH.TabIndex = 25;
@@ -536,19 +537,20 @@
             // 
             // importRawDialog
             // 
-            this.importRawDialog.FileName = "openFileDialog2";
+            this.importRawDialog.Filter = "Text Files (*.txt)|*.txt|VLF Files (*.vlf)|*.vlf|Data Files (*.dat)|*.dat";
             // 
             // SVLF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1093, 720);
+            this.ClientSize = new System.Drawing.Size(1093, 681);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tsToolBar);
             this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(1000, 720);
             this.Name = "SVLF";
             this.Text = "Simple VLF";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -613,7 +615,7 @@
         private System.Windows.Forms.ToolStripMenuItem fraserFilterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem karousHjeltFilterToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripButton tsFraserFilter;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
