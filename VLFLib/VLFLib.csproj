@@ -50,6 +50,7 @@
     <Compile Include="Data\VlfDataReader.cs" />
     <Compile Include="Gridding\Kriging.cs" />
     <Compile Include="Processing\VlfFilter.cs" />
+    <Compile Include="Processing\VlfInterpolation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

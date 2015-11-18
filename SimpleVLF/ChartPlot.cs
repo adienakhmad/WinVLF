@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using MathNet.Numerics.LinearAlgebra;
 using OxyPlot;
@@ -36,8 +29,7 @@ namespace SimpleVLF
         public ChartPlot(string title, KarousHjeltData kh)
         {
             InitializeComponent();
-            //plotView1.Model = MultiGraphPaper(title, "Z", "%", kh.DepthLevel);
-            plotView1.Model = HeatMapModel(title);
+            plotView1.Model = HeatMapModel(title, kh.SkinDepth);
             HeatMapKriging(kh);
         }
 
@@ -83,8 +75,8 @@ namespace SimpleVLF
             // Preparing Kriging Object
             var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.DistanceArray, kh.DepthArray);
             var valueVector = Vector<float>.Build.DenseOfArray(kh.KarousHjeltArray);
-            Powvargram vgram = new Powvargram(inputPoints, valueVector);
-            Kriging krig = new Kriging(inputPoints, valueVector, vgram);
+            var vgram = new Powvargram(inputPoints, valueVector);
+            var krig = new Kriging(inputPoints, valueVector, vgram);
 
 
             var xmax = kh.DistanceArray.Max();
@@ -108,7 +100,7 @@ namespace SimpleVLF
 
             // Create the heatmap series
 
-            var khmap = new HeatMapSeries()
+            var khmap = new HeatMapSeries
             {
                 X0 = kh.DistanceArray.Min(),
                 X1 = kh.DistanceArray.Max(),
@@ -120,8 +112,6 @@ namespace SimpleVLF
 
             khmap.Data.Fill2D(double.NaN);
             // Filling the data by interpolating using kriging
-            int my = (int) (kh.Spacing/ySpacing);
-            var  multiplier = Convert.ToInt32((3*kh.Spacing)/xSpacing)/my;
             for (var i = 0; i < ny; i++)
             {
                 for (var j = 0; j < nx; j++)
@@ -135,16 +125,23 @@ namespace SimpleVLF
             plotView1.Model.Series.Add(khmap);
         }
 
-        private static PlotModel HeatMapModel(string title)
+        private static PlotModel HeatMapModel(string title, float skin)
         {
+            var subtitle = string.Empty;
+            if (!skin.Equals(0))
+            {
+                subtitle = $"Skin Depth = {skin}m";
+            }
             var plotModel1 = new PlotModel
             {
                 PlotType = PlotType.Cartesian,
-                Title = $"KH - {title}",
+                Title = $"Apparent Conductivity - {title}",
+                Subtitle = subtitle,
+                SubtitleFontSize = 10,
                 TitleFont = "Tahoma",
                 TitleFontSize = 12,
                 DefaultFont = "Tahoma",
-                IsLegendVisible = false,
+                IsLegendVisible = false
             };
             var linearColorAxis1 = new LinearColorAxis
             {
@@ -162,7 +159,7 @@ namespace SimpleVLF
                 MinorGridlineStyle = LineStyle.Solid,
                 Position = AxisPosition.Bottom,
                 Title = "Distance",
-                Unit = "m",
+                Unit = "m"
             };
             plotModel1.Axes.Add(linearAxis1);
             var linearAxis2 = new LinearAxis
@@ -208,7 +205,7 @@ namespace SimpleVLF
                 MinorGridlineStyle = LineStyle.Solid,
                 Position = AxisPosition.Bottom,
                 Title = "Distance",
-                Unit = "m",
+                Unit = "m"
             };
             plotModel1.Axes.Add(linearAxis1);
             var linearAxis2 = new LinearAxis
@@ -239,10 +236,10 @@ namespace SimpleVLF
         public static double BilinearInterpolation(double[] x, double[] y, double[,] z, double xval, double yval)
         {
             //calculates single point bilinear interpolation
-            double zval = 0.0;
-            for (int i = 0; i < x.Length - 1; i++)
+            var zval = 0.0;
+            for (var i = 0; i < x.Length - 1; i++)
             {
-                for (int j = 0; j < y.Length - 1; j++)
+                for (var j = 0; j < y.Length - 1; j++)
                 {
                     if (xval >= x[i] && xval < x[i + 1] && yval >= y[j] && yval < y[j + 1])
                     {
@@ -259,8 +256,8 @@ namespace SimpleVLF
         public static double[] BilinearInterpolation(double[] x, double[] y, double[,] z, double[] xvals, double[] yvals)
         {
             //calculates multiple point bilinear interpolation
-            double[] zvals = new double[xvals.Length];
-            for (int i = 0; i < xvals.Length; i++)
+            var zvals = new double[xvals.Length];
+            for (var i = 0; i < xvals.Length; i++)
                 zvals[i] = BilinearInterpolation(x, y, z, xvals[i], yvals[i]);
             return zvals;
         }

@@ -67,6 +67,7 @@
     <Compile Include="ChartPlot.Designer.cs">
       <DependentUpon>ChartPlot.cs</DependentUpon>
     </Compile>
+    <Compile Include="InputPrompt.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

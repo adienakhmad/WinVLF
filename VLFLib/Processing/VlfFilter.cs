@@ -8,6 +8,30 @@ namespace VLFLib.Processing
 {
     public static class VlfFilter
     {
+        public static TiltData MovingAverage(TiltData raw, int order)
+        {
+            var npt = raw.Count;
+            var f_len = order - 1;
+            var movDistance = new float[npt -f_len];
+            var movVal = new float[npt- f_len];
+
+            for (int i = 0; i < npt-f_len; i++)
+            {
+                var dist = new float[order];
+                var val = new float[order];
+
+                for (int j = 0; j < order; j++)
+                {
+                    dist[j] = raw.GetDistanceAt(i + j);
+                    val[j] = raw.GetTiltAt(i + j);
+                }
+
+                movDistance[i] = dist.Average();
+                movVal[i] = val.Average();
+            }
+
+            return new TiltData($"{raw.Name}_smooth",npt-f_len,raw.Spacing,movDistance,movVal);
+        }
         public static FraserData Fraser(TiltData raw)
         {
             var count = raw.Count;
@@ -25,13 +49,13 @@ namespace VLFLib.Processing
                 }
 
                 fraserDist[i] = distanceInput.Average();
-                fraserVal[i] = (valueInput[0] + valueInput[1] - valueInput[2] - valueInput[3])/4;
+                fraserVal[i] = (valueInput[0] + valueInput[1] - valueInput[2] - valueInput[3]);
             }
 
             Debug.Write("Fraser count: ");
-            Debug.WriteLine(count-3);
+            Debug.WriteLine(count - 3);
 
-            return new FraserData(raw.Name, count-3, raw.Spacing, fraserDist, fraserVal);
+            return new FraserData(raw.Name, count - 3, raw.Spacing, fraserDist, fraserVal);
         }
 
         public static KarousHjeltData KarousHjelt(TiltData raw, float skindepth)
@@ -65,12 +89,12 @@ namespace VLFLib.Processing
                     var i5 = j + (k*2);
                     var i6 = j + (k*3);
 
-                    float h1 = raw.GetTiltAt(i1);
-                    float h2 = raw.GetTiltAt(i2);
-                    float h3 = raw.GetTiltAt(i3);
-                    float h4 = raw.GetTiltAt(i4);
-                    float h5 = raw.GetTiltAt(i5);
-                    float h6 = raw.GetTiltAt(i6);
+                    var h1 = raw.GetTiltAt(i1);
+                    var h2 = raw.GetTiltAt(i2);
+                    var h3 = raw.GetTiltAt(i3);
+                    var h4 = raw.GetTiltAt(i4);
+                    var h5 = raw.GetTiltAt(i5);
+                    var h6 = raw.GetTiltAt(i6);
 
                     var distance = xx + ((j - na)*raw.Spacing);
                     var depth = -k*raw.Spacing;
@@ -85,11 +109,11 @@ namespace VLFLib.Processing
                     distList.Add(distance);
                     depthList.Add(depth);
                     khList.Add(value);
-
                 }
             }
 
-            return new KarousHjeltData(raw.Name,raw.Spacing,raw.Count, skindepth,depthStep, distList.ToArray(),depthList.ToArray(),khList.ToArray());
+            return new KarousHjeltData(raw.Name, raw.Spacing, raw.Count, skindepth, depthStep, distList.ToArray(),
+                depthList.ToArray(), khList.ToArray());
         }
     }
 }

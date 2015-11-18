@@ -7,27 +7,30 @@ namespace VLFLib.Data
     public class TiltData
     {
         public string Name;
-        public int Count;
-        public float Spacing;
-        private readonly float[] _distances;
-        private readonly float[] _tildata;
-        private readonly bool _isAscending;
+        public int Count { get; }
+        public float Spacing { get; }
 
-        public TiltData(string name, int n, float spacing, float[] distance, float[] tiltdata)
+        public float[] DistancesArray { get; }
+
+        public float[] Tildata { get; }
+
+        public bool IsAscending1 { get; }
+
+        public TiltData(string name, int n, float spacing, float[] distanceArray, float[] tiltdata)
         {
             Name = name;
             Count = n;
             Spacing = spacing;
-            _distances = distance;
-            _tildata = tiltdata;
-            _isAscending = CheckifAscending();
+            DistancesArray = distanceArray;
+            Tildata = tiltdata;
+            IsAscending1 = CheckifAscending();
         }
 
         private bool CheckifAscending()
         {
             for (int i = 0; i < Count - 1; i++)
             {
-                if (_distances[i] > _distances[i + 1]) return false;
+                if (DistancesArray[i] > DistancesArray[i + 1]) return false;
             }
 
             return true;
@@ -35,7 +38,7 @@ namespace VLFLib.Data
 
         public bool IsAscending()
         {
-            return _isAscending;
+            return IsAscending1;
         }
 
         public void Export(string filename)
@@ -45,31 +48,31 @@ namespace VLFLib.Data
 
         public float GetDistanceAt(int index)
         {
-            return _distances[index];
+            return DistancesArray[index];
         }
 
         public float GetTiltAt(int index)
         {
-            return _tildata[index];
+            return Tildata[index];
         }
 
         public float MaxDistance()
         {
-            return _distances.Max();
+            return DistancesArray.Max();
         }
 
         public float MinDistance()
         {
-            return _distances.Min();
+            return DistancesArray.Min();
         }
 
         public float MaxTilt()
         {
-            return _tildata.Max();
+            return Tildata.Max();
         }
         public float MinTilt()
         {
-            return _tildata.Min();
+            return Tildata.Min();
         }
     }
 }
