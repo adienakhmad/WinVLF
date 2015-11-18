@@ -243,10 +243,14 @@ namespace SimpleVLF
             }
 
             var kh = VlfFilter.KarousHjelt(tiltData, 0);
+            for (int i = 0; i < kh.KarousHjeltArray.Length; i++)
+            {
+                Debug.WriteLine($"{kh.DistanceArray[i]}\t{kh.DepthArray[i]}\t{kh.KarousHjeltArray[i]}");
+            }
             var name = FindUniqeName(listViewRaw.SelectedItems[0].Name, listViewKH);
             var item = new ListViewItem()
             {
-                Name = Name,
+                Name = name,
                 Text = Text,
                 Tag = kh
             };
@@ -255,7 +259,8 @@ namespace SimpleVLF
             item.SubItems.Add(kh.SkinDepth.ToString(CultureInfo.InvariantCulture));
             listViewKH.Items.Add(item);
 
-            
+            var form2 = new ChartPlot(item.Name, kh) {MdiParent = this};
+            form2.Show();
 
         }
     }

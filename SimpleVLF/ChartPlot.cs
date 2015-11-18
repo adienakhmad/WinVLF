@@ -4,13 +4,16 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MathNet.Numerics.LinearAlgebra;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using VLFLib.Data;
+using VLFLib.Gridding;
 
 namespace SimpleVLF
 {
@@ -33,8 +36,9 @@ namespace SimpleVLF
         public ChartPlot(string title, KarousHjeltData kh)
         {
             InitializeComponent();
-            plotView1.Model = MultiGraphPaper(title, "Z", "%", kh.DepthLevel);
-            AddSampleSeries();
+            //plotView1.Model = MultiGraphPaper(title, "Z", "%", kh.DepthLevel);
+            plotView1.Model = HeatMapModel(title);
+            HeatMapKriging(kh);
         }
 
         private void AddSeries(TiltData data)
@@ -59,12 +63,12 @@ namespace SimpleVLF
         {
             var fraserSeries = new LineSeries
             {
-                Title = "Tilt (%)",
+                Title = "Fraser (%)",
                 MarkerType = MarkerType.Circle,
                 MarkerFill = OxyColors.DarkViolet,
                 Color = OxyColors.DarkViolet
             };
-            
+
 
             for (var i = 0; i < data.Count; i++)
             {
@@ -74,52 +78,105 @@ namespace SimpleVLF
             plotView1.Model.Series.Add(fraserSeries);
         }
 
-        private void AddSeries(KarousHjeltData kh)
+        private void HeatMapKriging(KarousHjeltData kh)
         {
-            for (var i = 0; i < kh.DepthLevel; i++)
+            // Preparing Kriging Object
+            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.DistanceArray, kh.DepthArray);
+            var valueVector = Vector<float>.Build.DenseOfArray(kh.KarousHjeltArray);
+            Powvargram vgram = new Powvargram(inputPoints, valueVector);
+            Kriging krig = new Kriging(inputPoints, valueVector, vgram);
+
+
+            var xmax = kh.DistanceArray.Max();
+            var xmin = kh.DistanceArray.Min();
+            var ymax = kh.DepthArray.Max();
+            var ymin = kh.DepthArray.Min();
+
+            // Calculate axis range
+            var dx = xmax - xmin;
+            var dy = Math.Abs(Math.Abs(ymax) - Math.Abs(ymin));
+
+
+            // Determine spacing with 200 points grid
+            const int nx = 200;
+            var xSpacing = dx/(nx - 1);
+
+            // Determine number of y grid so that the space is equal
+            var ny = Convert.ToInt32(Math.Ceiling(dy/xSpacing));
+            var ySpacing = dy/(ny - 1);
+
+
+            // Create the heatmap series
+
+            var khmap = new HeatMapSeries()
             {
-                var key = $"D{i}";
-                var series = new LineSeries
-                {
-                    Title = "Tilt (%)",
-                    MarkerType = MarkerType.Circle,
-                    MarkerFill = OxyColors.DarkViolet,
-                    Color = OxyColors.DarkViolet,
-                    XAxisKey = "Dx",
-                    YAxisKey = key
-                };
+                X0 = kh.DistanceArray.Min(),
+                X1 = kh.DistanceArray.Max(),
+                Y0 = kh.DepthArray.Max(),
+                Y1 = kh.DepthArray.Min(),
+                Data = new double[nx, ny],
+                Interpolate = false
+            };
 
-                for (int j = 0; j < kh.KarousHjeltArray.Length; j++)
+            khmap.Data.Fill2D(double.NaN);
+            // Filling the data by interpolating using kriging
+            int my = (int) (kh.Spacing/ySpacing);
+            var  multiplier = Convert.ToInt32((3*kh.Spacing)/xSpacing)/my;
+            for (var i = 0; i < ny; i++)
+            {
+                for (var j = 0; j < nx; j++)
                 {
-                    if (Math.Abs(kh.DepthArray[i] - (-((i+1)*kh.Spacing))) > 1e-5)
-                    {
-                        
-                    }
+                    var point2Interpolate =
+                        Vector<float>.Build.DenseOfArray(new[] {xmin + (j*xSpacing), ymax - (i*ySpacing)});
+                    khmap.Data[j, i] = krig.Interpolate(point2Interpolate);
                 }
-
-
-                plotView1.Model.Series.Add(series);
             }
+
+            plotView1.Model.Series.Add(khmap);
         }
 
-        private void AddSampleSeries()
+        private static PlotModel HeatMapModel(string title)
         {
-            for (int i = 0; i < 5; i++)
+            var plotModel1 = new PlotModel
             {
-                var key = $"D{i}";
-                var series = new LineSeries
-                {
-                    Title = "Tilt (%)",
-                    MarkerType = MarkerType.Circle,
-                    MarkerFill = OxyColors.DarkViolet,
-                    Color = OxyColors.DarkViolet
-                };
+                PlotType = PlotType.Cartesian,
+                Title = $"KH - {title}",
+                TitleFont = "Tahoma",
+                TitleFontSize = 12,
+                DefaultFont = "Tahoma",
+                IsLegendVisible = false,
+            };
+            var linearColorAxis1 = new LinearColorAxis
+            {
+                Position = AxisPosition.Right,
+                InvalidNumberColor = OxyColors.Transparent,
+                Palette = OxyPalettes.Jet(256)
+            };
+            plotModel1.Axes.Add(linearColorAxis1);
 
-                series.Points.Add(new DataPoint(0,0));
-                series.XAxisKey = "Dx";
-                series.YAxisKey = key;
-                plotView1.Model.Series.Add(series);
-            }
+            var linearAxis1 = new LinearAxis
+            {
+                MajorGridlineColor = OxyColor.FromArgb(40, 0, 0, 139),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineColor = OxyColor.FromArgb(20, 0, 0, 139),
+                MinorGridlineStyle = LineStyle.Solid,
+                Position = AxisPosition.Bottom,
+                Title = "Distance",
+                Unit = "m",
+            };
+            plotModel1.Axes.Add(linearAxis1);
+            var linearAxis2 = new LinearAxis
+            {
+                MajorGridlineColor = OxyColor.FromArgb(40, 0, 0, 139),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineColor = OxyColor.FromArgb(20, 0, 0, 139),
+                MinorGridlineStyle = LineStyle.Solid,
+                Title = "Depth",
+                Unit = "m"
+            };
+            plotModel1.Axes.Add(linearAxis2);
+
+            return plotModel1;
         }
 
         private static PlotModel GraphTilt(string title)
@@ -129,7 +186,7 @@ namespace SimpleVLF
 
         private static PlotModel GraphFraser(string title)
         {
-            return GraphPaper("Fraser - "+ title, "Fraser Value", "%");
+            return GraphPaper("Fraser - " + title, "Fraser Value", "%");
         }
 
         private static PlotModel GraphPaper(string title, string ytitle, string yunit)
@@ -141,7 +198,7 @@ namespace SimpleVLF
                 TitleFont = "Tahoma",
                 TitleFontSize = 12,
                 DefaultFont = "Tahoma",
-                IsLegendVisible = false
+                IsLegendVisible = true
             };
             var linearAxis1 = new LinearAxis
             {
@@ -167,61 +224,6 @@ namespace SimpleVLF
             return plotModel1;
         }
 
-        private static PlotModel MultiGraphPaper(string title, string ytitle, string yunit, int n)
-        {
-            var plotmodel1 = new PlotModel()
-            {
-                PlotType = PlotType.Cartesian,
-                Title = title,
-                TitleFont = "Tahoma",
-                TitleFontSize = 12,
-                DefaultFont = "Tahoma",
-                IsLegendVisible = false
-            };
-
-            var linearAxis1 = new LinearAxis
-            {
-                MajorGridlineColor = OxyColor.FromArgb(40, 0, 0, 139),
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineColor = OxyColor.FromArgb(20, 0, 0, 139),
-                MinorGridlineStyle = LineStyle.Solid,
-                Position = AxisPosition.Bottom,
-                Title = "Distance",
-                Unit = "m",
-                Key = "Dx"
-            };
-            plotmodel1.Axes.Add(linearAxis1);
-
-            var splitter = 1.0/n;
-            var startpos = 0.0;
-            var endpos = 1.0/n;
-            for (var i = 0; i < n; i++)
-            {
-                var key = $"D{i}";
-                
-                var linearAxis2 = new LinearAxis
-                {
-                    MajorGridlineColor = OxyColor.FromArgb(40, 0, 0, 139),
-                    MajorGridlineStyle = LineStyle.Solid,
-                    MinorGridlineColor = OxyColor.FromArgb(20, 0, 0, 139),
-                    MinorGridlineStyle = LineStyle.Solid,
-                    Title = ytitle + $"{n - i}",
-                    StartPosition = startpos,
-                    EndPosition = endpos,
-                    Unit = yunit,
-                    Key = key
-                    
-                };
-                Debug.Write("StartPosition: ");
-                Debug.WriteLine(startpos);
-                startpos = endpos + (splitter/10);
-                endpos += splitter;
-                plotmodel1.Axes.Add(linearAxis2);
-            }
-
-            return plotmodel1;
-        }
-
         private void PlotForm_Load(object sender, EventArgs e)
         {
         }
@@ -232,6 +234,35 @@ namespace SimpleVLF
             {
                 axise.Reset();
             }
+        }
+
+        public static double BilinearInterpolation(double[] x, double[] y, double[,] z, double xval, double yval)
+        {
+            //calculates single point bilinear interpolation
+            double zval = 0.0;
+            for (int i = 0; i < x.Length - 1; i++)
+            {
+                for (int j = 0; j < y.Length - 1; j++)
+                {
+                    if (xval >= x[i] && xval < x[i + 1] && yval >= y[j] && yval < y[j + 1])
+                    {
+                        zval = z[i, j]*(x[i + 1] - xval)*(y[j + 1] - yval)/(x[i + 1] - x[i])/(y[j + 1] - y[j]) +
+                               z[i + 1, j]*(xval - x[i])*(y[j + 1] - yval)/(x[i + 1] - x[i])/(y[j + 1] - y[j]) +
+                               z[i, j + 1]*(x[i + 1] - xval)*(yval - y[j])/(x[i + 1] - x[i])/(y[j + 1] - y[j]) +
+                               z[i + 1, j + 1]*(xval - x[i])*(yval - y[j])/(x[i + 1] - x[i])/(y[j + 1] - y[j]);
+                    }
+                }
+            }
+            return zval;
+        }
+
+        public static double[] BilinearInterpolation(double[] x, double[] y, double[,] z, double[] xvals, double[] yvals)
+        {
+            //calculates multiple point bilinear interpolation
+            double[] zvals = new double[xvals.Length];
+            for (int i = 0; i < xvals.Length; i++)
+                zvals[i] = BilinearInterpolation(x, y, z, xvals[i], yvals[i]);
+            return zvals;
         }
     }
 }

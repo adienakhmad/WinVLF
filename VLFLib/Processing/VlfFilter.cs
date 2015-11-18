@@ -43,7 +43,7 @@ namespace VLFLib.Processing
 
             const float a = 0.1025f;
             const float b = 0.0590f;
-            const float c = 0.05615f;
+            const float c = 0.5615f;
 
 
             var x0 = raw.GetDistanceAt(0);
@@ -56,7 +56,6 @@ namespace VLFLib.Processing
                 var na = k*3;
                 var nl = n - na;
                 var xx = x0 + (na*raw.Spacing);
-
                 for (var j = na; j < nl; j++)
                 {
                     var i1 = j - (k*3);
@@ -90,7 +89,7 @@ namespace VLFLib.Processing
                 }
             }
 
-            return new KarousHjeltData(raw.Name,raw.Spacing,skindepth,depthStep, distList.ToArray(),depthList.ToArray(),khList.ToArray());
+            return new KarousHjeltData(raw.Name,raw.Spacing,raw.Count, skindepth,depthStep, distList.ToArray(),depthList.ToArray(),khList.ToArray());
         }
     }
 }

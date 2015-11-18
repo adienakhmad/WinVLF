@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Fraser 1");
             this.tsToolBar = new System.Windows.Forms.ToolStrip();
             this.tsAddData = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -462,8 +461,6 @@
             this.listViewFraser.ContextMenuStrip = this.cmListView;
             this.listViewFraser.FullRowSelect = true;
             this.listViewFraser.HideSelection = false;
-            this.listViewFraser.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
             this.listViewFraser.Location = new System.Drawing.Point(12, 228);
             this.listViewFraser.MultiSelect = false;
             this.listViewFraser.Name = "listViewFraser";
