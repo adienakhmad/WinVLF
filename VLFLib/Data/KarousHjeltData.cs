@@ -2,20 +2,21 @@
 
 namespace VLFLib.Data
 {
+    [Serializable]
     public class KarousHjeltData
     {
-        public string Name;
-        public float Spacing;
-        public int RawLength;
-        public bool IsNormalized;
-        public float SkinDepth;
-        public int DepthLevel;
+        public string Name { get; set; }
+        public float Spacing { get; private set; }
+        public int RawLength { get; private set; }
+        public bool IsNormalized { get; private set; }
+        public float SkinDepth { get; private set; }
+        public int DepthLevel { get; private set; }
 
-        public float[] DistanceArray { get; }
+        public float[] DistanceArray { get; private set; }
 
-        public float[] DepthArray { get; }
+        public float[] DepthArray { get; private set; }
 
-        public float[] KarousHjeltArray { get; }
+        public float[] KarousHjeltArray { get; private set; }
 
         public KarousHjeltData(string name, float spacing, int rawlength, float skindepth, int dlevel,float[] distArray, float[] depthArray,
             float[] kharray)

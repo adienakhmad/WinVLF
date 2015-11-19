@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace VLFLib.Data
 {
+    [Serializable]
     public class TiltData
     {
         public string Name;
@@ -28,7 +29,7 @@ namespace VLFLib.Data
 
         private bool CheckifAscending()
         {
-            for (int i = 0; i < Count - 1; i++)
+            for (var i = 0; i < Count - 1; i++)
             {
                 if (DistancesArray[i] > DistancesArray[i + 1]) return false;
             }

@@ -38,7 +38,7 @@
             this.plotView1.Location = new System.Drawing.Point(0, 0);
             this.plotView1.Name = "plotView1";
             this.plotView1.PanCursor = System.Windows.Forms.Cursors.Hand;
-            this.plotView1.Size = new System.Drawing.Size(805, 323);
+            this.plotView1.Size = new System.Drawing.Size(634, 311);
             this.plotView1.TabIndex = 0;
             this.plotView1.Text = "plotView1";
             this.plotView1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
@@ -51,7 +51,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(805, 323);
+            this.ClientSize = new System.Drawing.Size(634, 311);
             this.Controls.Add(this.plotView1);
             this.Name = "ChartPlot";
             this.ShowIcon = false;

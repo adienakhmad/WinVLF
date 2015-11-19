@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Antiufo.Controls;
@@ -13,10 +14,12 @@ namespace SimpleVLF
     public partial class SVLF : Form
     {
         public static int Count;
+        private static FileInfo _currentFile;
 
         public SVLF()
         {
             InitializeComponent();
+            _currentFile = new FileInfo(Application.StartupPath + string.Empty);
         }
 
         private void SVLF_Load(object sender, EventArgs e)
@@ -63,7 +66,7 @@ namespace SimpleVLF
             {
                 if (listViewRaw.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(@"You have not selected any data.");
+                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                     return;
                 }
 
@@ -81,7 +84,7 @@ namespace SimpleVLF
             {
                 if (listViewFraser.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(@"You have not selected any data.");
+                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                     return;
                 }
 
@@ -99,7 +102,7 @@ namespace SimpleVLF
             {
                 if (listViewKH.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(@"You have not seleced any data.");
+                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                     return;
                 }
                 var selected = listViewKH.SelectedItems[0];
@@ -117,7 +120,7 @@ namespace SimpleVLF
         {
             if (!listViewRaw.Focused || listViewRaw.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"You have not selected any data.");
+                MessageBox.Show(@"You have not selected any tilt data.",@"No Data",MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
                 return;
             }
 
@@ -129,7 +132,7 @@ namespace SimpleVLF
             var data = listViewRaw.SelectedItems[0].Tag as TiltData;
             if (data != null && ((Math.Abs(order)) <= 1 || order > data.Count))
             {
-                MessageBox.Show(@"Invalid filter order.");
+                MessageBox.Show(@"Invalid filter order.",@"Error");
                 return;
             }
 
@@ -139,6 +142,7 @@ namespace SimpleVLF
                 return;
 
             var smooth = VlfFilter.MovingAverage(data, Convert.ToInt32(order));
+            smooth.Name = newname;
 
             var item = new ListViewItem {Text = newname, Name = newname};
             item.SubItems.Add(smooth.Count.ToString());
@@ -157,7 +161,7 @@ namespace SimpleVLF
         {
             if (listViewRaw.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"You have not selected any data.");
+                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
@@ -168,13 +172,15 @@ namespace SimpleVLF
                 return;
             }
 
-            // Do Fraser Filtering
-            var fraser = VlfFilter.Fraser(tiltData);
-
-            // Create a new listview item to be added to ListViewFraser
             var name = FindUniqeName(listViewRaw.SelectedItems[0].Name, listViewFraser);
             if (InputPrompt.InputStringBox("Fraser Filter", "Enter a name.", ref name) != DialogResult.OK)
                 return;
+
+            // Do Fraser Filtering
+            var fraser = VlfFilter.Fraser(tiltData);
+            fraser.Name = name;
+
+            // Create a new listview item to be added to ListViewFraser
             var item = new ListViewItem
             {
                 Name = name,
@@ -184,7 +190,6 @@ namespace SimpleVLF
 
             item.SubItems.Add(fraser.Count.ToString());
             item.SubItems.Add(fraser.Spacing.ToString(CultureInfo.InvariantCulture));
-
             listViewFraser.Items.Add(item);
 
             // end of creating new item to be added to ListViewFraser
@@ -198,7 +203,7 @@ namespace SimpleVLF
         {
             if (listViewRaw.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"You have not selected any data.");
+                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
@@ -220,6 +225,7 @@ namespace SimpleVLF
                 return;
 
             var kh = VlfFilter.KarousHjelt(tiltData, skin);
+            kh.Name = name;
 
 
             var item = new ListViewItem()
@@ -307,10 +313,6 @@ namespace SimpleVLF
                 chform.WindowState = FormWindowState.Normal;
 
             LayoutMdi(MdiLayout.Cascade);
-        }
-
-        private void tsViewTable_Click(object sender, EventArgs e)
-        {
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -405,6 +407,7 @@ namespace SimpleVLF
                 return;
 
             var tiltData = VlfInterpolation.CubicSplineNatural(data, Convert.ToSingle(spacing),Convert.ToInt32(npt));
+            tiltData.Name = newname;
             var item = new ListViewItem { Text = newname, Name = newname };
             item.SubItems.Add(tiltData.Count.ToString());
             item.SubItems.Add(tiltData.Spacing.ToString(CultureInfo.InvariantCulture));
@@ -416,6 +419,76 @@ namespace SimpleVLF
                 MdiParent = this
             };
             form2.Show();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveProjectNow();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = saveProjectDialog.ShowDialog();
+            if (dlg != DialogResult.OK) return;
+
+            VlfProjectHandler.Save(SaveProject(saveProjectDialog.FileName),saveProjectDialog.FileName);
+            _currentFile = new FileInfo(saveProjectDialog.FileName);
+            Text = $"WinVLF - [{_currentFile.Name}]";
+            tsStatusLabel.Text = string.Empty;
+        }
+
+        private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = openProjectDialog.ShowDialog();
+            if (dlg != DialogResult.OK) return;
+            LoadProject(VlfProjectHandler.Read(openProjectDialog.FileName));
+            _currentFile = new FileInfo(openProjectDialog.FileName);
+            MessageBox.Show(@"Project opened succesfully.",@"Open Project",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            tsStatusLabel.Text = string.Empty;
+        }
+
+        private void SVLF_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (listViewRaw.Items.Count == 0 && listViewFraser.Items.Count == 0 && listViewKH.Items.Count == 0)
+            {
+                return;
+            }
+            var dlg = MessageBox.Show(@"Do you want to save before exit?", @"Save before exit",
+                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+            switch (dlg)
+            {
+                    case DialogResult.Cancel:
+                    e.Cancel = true;
+                    break;
+                    case DialogResult.OK:
+                    SaveProjectNow();
+                    break;
+                    case DialogResult.No:
+                    break;
+            }
+        }
+
+        private void closeStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listViewRaw.Items.Count == 0 && listViewFraser.Items.Count == 0 && listViewKH.Items.Count == 0)
+            {
+                return;
+            }
+            var dlg = MessageBox.Show(@"Do you want to save before closing this project?", @"Save before closing",
+                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+            switch (dlg)
+            {
+                case DialogResult.Cancel:
+                    break;
+                case DialogResult.OK:
+                    SaveProjectNow();
+                    break;
+                case DialogResult.No:
+                    CloseProject();
+                    break;
+            }
         }
     }
 }

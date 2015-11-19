@@ -53,18 +53,19 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cmListViewFraser = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.label3 = new System.Windows.Forms.Label();
             this.listViewKH = new System.Windows.Forms.ListView();
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.importRawDialog = new System.Windows.Forms.OpenFileDialog();
-            this.cmListViewFraser = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.cmListViewKH = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripMenuItem();
+            this.importRawDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
             this.tsmPlot = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmDeleteRaw = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,7 +76,6 @@
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmDeleteKH = new System.Windows.Forms.ToolStripMenuItem();
             this.tsAddData = new System.Windows.Forms.ToolStripButton();
-            this.tsViewTable = new System.Windows.Forms.ToolStripButton();
             this.tsPlotChart = new System.Windows.Forms.ToolStripButton();
             this.tsInterpolate = new System.Windows.Forms.ToolStripButton();
             this.tsFilter = new System.Windows.Forms.ToolStripDropDownButton();
@@ -92,10 +92,16 @@
             this.tileHorizontallyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tileVerticallyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.closeStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsToolBar.SuspendLayout();
             this.cmListViewRaw.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.cmListViewFraser.SuspendLayout();
             this.cmListViewKH.SuspendLayout();
@@ -107,7 +113,6 @@
             this.tsToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsAddData,
             this.toolStripSeparator3,
-            this.tsViewTable,
             this.tsPlotChart,
             this.toolStripSeparator1,
             this.tsInterpolate,
@@ -170,15 +175,19 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openProjectToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
+            this.closeStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
-            this.fileToolStripMenuItem.Text = "S-VLF";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -204,6 +213,8 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 659);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1093, 22);
@@ -312,6 +323,22 @@
             // 
             this.columnHeader6.Text = "Spacing";
             // 
+            // cmListViewFraser
+            // 
+            this.cmListViewFraser.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem4,
+            this.tsmDeleteFraser});
+            this.cmListViewFraser.Name = "cmListView";
+            this.cmListViewFraser.Size = new System.Drawing.Size(147, 92);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(146, 22);
+            this.toolStripMenuItem4.Text = "Export To File";
+            // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -359,30 +386,6 @@
             this.columnHeader10.Text = "Skin Depth";
             this.columnHeader10.Width = 65;
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // importRawDialog
-            // 
-            this.importRawDialog.Filter = "Text Files (*.txt)|*.txt|VLF Files (*.vlf)|*.vlf|Data Files (*.dat)|*.dat";
-            // 
-            // cmListViewFraser
-            // 
-            this.cmListViewFraser.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem2,
-            this.toolStripMenuItem3,
-            this.toolStripMenuItem4,
-            this.tsmDeleteFraser});
-            this.cmListViewFraser.Name = "cmListView";
-            this.cmListViewFraser.Size = new System.Drawing.Size(147, 92);
-            // 
-            // toolStripMenuItem4
-            // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(146, 22);
-            this.toolStripMenuItem4.Text = "Export To File";
-            // 
             // cmListViewKH
             // 
             this.cmListViewKH.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -398,6 +401,20 @@
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
             this.toolStripMenuItem8.Size = new System.Drawing.Size(146, 22);
             this.toolStripMenuItem8.Text = "Export To File";
+            // 
+            // importRawDialog
+            // 
+            this.importRawDialog.Filter = "Text Files (*.txt)|*.txt|VLF Files (*.vlf)|*.vlf|Data Files (*.dat)|*.dat";
+            // 
+            // openProjectDialog
+            // 
+            this.openProjectDialog.DefaultExt = "vlfproj";
+            this.openProjectDialog.Filter = "VLF Project Files (*.vlf)|*.vlf";
+            // 
+            // saveProjectDialog
+            // 
+            this.saveProjectDialog.DefaultExt = "vlfproj";
+            this.saveProjectDialog.Filter = "VLF Project Files (*.vlf)|*.vlf";
             // 
             // tsmPlot
             // 
@@ -473,15 +490,6 @@
             this.tsAddData.Size = new System.Drawing.Size(90, 22);
             this.tsAddData.Text = "Import Data";
             this.tsAddData.Click += new System.EventHandler(this.tsAddData_Click);
-            // 
-            // tsViewTable
-            // 
-            this.tsViewTable.Image = global::SimpleVLF.Properties.Resources.table;
-            this.tsViewTable.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsViewTable.Name = "tsViewTable";
-            this.tsViewTable.Size = new System.Drawing.Size(99, 22);
-            this.tsViewTable.Text = "View As Table";
-            this.tsViewTable.Click += new System.EventHandler(this.tsViewTable_Click);
             // 
             // tsPlotChart
             // 
@@ -628,12 +636,48 @@
             this.closeAllToolStripMenuItem.Text = "Close All Window";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
+            // openProjectToolStripMenuItem
+            // 
+            this.openProjectToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.blue_folder_horizontal_open;
+            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openProjectToolStripMenuItem.Text = "Open Project";
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.disk_black;
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.disks_black;
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Text = "Save Project As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.information_balloon;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            // 
+            // tsStatusLabel
+            // 
+            this.tsStatusLabel.Name = "tsStatusLabel";
+            this.tsStatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // closeStripMenuItem
+            // 
+            this.closeStripMenuItem.Name = "closeStripMenuItem";
+            this.closeStripMenuItem.Size = new System.Drawing.Size(32, 19);
+            this.closeStripMenuItem.Text = "Close";
+            this.closeStripMenuItem.Click += new System.EventHandler(this.closeStripMenuItem_Click);
             // 
             // SVLF
             // 
@@ -648,14 +692,16 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(1000, 720);
             this.Name = "SVLF";
-            this.Text = "Simple VLF";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Text = "WinVLF - [New Project 1]";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SVLF_FormClosing);
             this.Load += new System.EventHandler(this.SVLF_Load);
             this.tsToolBar.ResumeLayout(false);
             this.tsToolBar.PerformLayout();
             this.cmListViewRaw.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.cmListViewFraser.ResumeLayout(false);
@@ -677,7 +723,6 @@
         private System.Windows.Forms.ToolStripButton tsAddData;
         private System.Windows.Forms.ToolStripButton tsPlotChart;
         private System.Windows.Forms.ToolStripButton tsInterpolate;
-        private System.Windows.Forms.ToolStripButton tsViewTable;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListView listViewRaw;
@@ -706,7 +751,6 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.ColumnHeader columnHeader10;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem cascadeToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton tsFilter;
         private System.Windows.Forms.ToolStripMenuItem movingAverageToolStripMenuItem;
@@ -731,6 +775,13 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem8;
         private System.Windows.Forms.ToolStripMenuItem tsmDeleteKH;
+        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openProjectDialog;
+        private System.Windows.Forms.SaveFileDialog saveProjectDialog;
+        private System.Windows.Forms.ToolStripStatusLabel tsStatusLabel;
+        private System.Windows.Forms.ToolStripMenuItem closeStripMenuItem;
     }
 }
 

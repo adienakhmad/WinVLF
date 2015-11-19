@@ -89,7 +89,7 @@ namespace SimpleVLF
             var dy = Math.Abs(Math.Abs(ymax) - Math.Abs(ymin));
 
 
-            // Determine spacing with 200 points grid
+            // Determine spacing with nx points grid
             const int nx = 200;
             var xSpacing = dx/(nx - 1);
 

@@ -2,13 +2,14 @@
 
 namespace VLFLib.Data
 {
+    [Serializable]
     public class FraserData
     {
-        public string Name;
-        public int Count;
-        public float Spacing;
-        public float[] Distances;
-        public float[] FraserValue;
+        public string Name { get; set; }
+        public int Count { get; private set; }
+        public float Spacing { get; private set; }
+        public float[] Distances { get; private set; }
+        public float[] FraserValue { get; private set; }
 
         internal FraserData(string name, int count, float spacing, float[] distances, float[] fraserValue)
         {
