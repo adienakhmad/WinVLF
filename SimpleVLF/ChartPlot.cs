@@ -26,11 +26,11 @@ namespace SimpleVLF
             AddSeries(data);
         }
 
-        public ChartPlot(string title, KarousHjeltData kh)
+        public ChartPlot(string title, HeatMapSeries khmap, float skin)
         {
             InitializeComponent();
-            plotView1.Model = HeatMapModel(title, kh.SkinDepth);
-            HeatMapKriging(kh);
+            plotView1.Model = HeatMapModel(title, skin);
+            plotView1.Model.Series.Add(khmap);
         }
 
         private void AddSeries(TiltData data)
@@ -68,61 +68,6 @@ namespace SimpleVLF
             }
 
             plotView1.Model.Series.Add(fraserSeries);
-        }
-
-        private void HeatMapKriging(KarousHjeltData kh)
-        {
-            // Preparing Kriging Object
-            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.DistanceArray, kh.DepthArray);
-            var valueVector = Vector<float>.Build.DenseOfArray(kh.KarousHjeltArray);
-            var vgram = new Powvargram(inputPoints, valueVector);
-            var krig = new Kriging(inputPoints, valueVector, vgram);
-
-
-            var xmax = kh.DistanceArray.Max();
-            var xmin = kh.DistanceArray.Min();
-            var ymax = kh.DepthArray.Max();
-            var ymin = kh.DepthArray.Min();
-
-            // Calculate axis range
-            var dx = xmax - xmin;
-            var dy = Math.Abs(Math.Abs(ymax) - Math.Abs(ymin));
-
-
-            // Determine spacing with nx points grid
-            const int nx = 200;
-            var xSpacing = dx/(nx - 1);
-
-            // Determine number of y grid so that the space is equal
-            var ny = Convert.ToInt32(Math.Ceiling(dy/xSpacing));
-            var ySpacing = dy/(ny - 1);
-
-
-            // Create the heatmap series
-
-            var khmap = new HeatMapSeries
-            {
-                X0 = kh.DistanceArray.Min(),
-                X1 = kh.DistanceArray.Max(),
-                Y0 = kh.DepthArray.Max(),
-                Y1 = kh.DepthArray.Min(),
-                Data = new double[nx, ny],
-                Interpolate = false
-            };
-
-            khmap.Data.Fill2D(double.NaN);
-            // Filling the data by interpolating using kriging
-            for (var i = 0; i < ny; i++)
-            {
-                for (var j = 0; j < nx; j++)
-                {
-                    var point2Interpolate =
-                        Vector<float>.Build.DenseOfArray(new[] {xmin + (j*xSpacing), ymax - (i*ySpacing)});
-                    khmap.Data[j, i] = krig.Interpolate(point2Interpolate);
-                }
-            }
-
-            plotView1.Model.Series.Add(khmap);
         }
 
         private static PlotModel HeatMapModel(string title, float skin)

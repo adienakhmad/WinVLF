@@ -6,7 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Antiufo.Controls;
+using MathNet.Numerics.LinearAlgebra;
+using OxyPlot;
+using OxyPlot.Series;
 using VLFLib.Data;
+using VLFLib.Gridding;
 using VLFLib.Processing;
 
 namespace SimpleVLF
@@ -106,8 +110,9 @@ namespace SimpleVLF
                     return;
                 }
                 var selected = listViewKH.SelectedItems[0];
-                var form2 = new ChartPlot(selected.Name, selected.Tag as KarousHjeltData) {MdiParent = this};
-                form2.Show();
+                tsStatusLabel.Text = @"Building grid..";
+                krigingProgressBar.Visible = true;
+                krigingWorker.RunWorkerAsync(selected.Tag as KarousHjeltData);
             }
 
             else
@@ -238,9 +243,9 @@ namespace SimpleVLF
             item.SubItems.Add(kh.Spacing.ToString(CultureInfo.InvariantCulture));
             item.SubItems.Add(kh.SkinDepth.ToString(CultureInfo.InvariantCulture));
             listViewKH.Items.Add(item);
-
-            var form2 = new ChartPlot(item.Name, kh) {MdiParent = this};
-            form2.Show();
+            tsStatusLabel.Text = @"Building grid..";
+            krigingProgressBar.Visible = true;
+            krigingWorker.RunWorkerAsync(kh);
         }
 
         private void maximizeAllToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -489,6 +494,91 @@ namespace SimpleVLF
                     CloseProject();
                     break;
             }
+        }
+
+        private void krigingWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            Debug.WriteLine("Starting to do some work");
+            var kh = e.Argument as KarousHjeltData;
+            Debug.WriteLine($"Will process {kh.KarousHjeltArray.Length} datas");
+
+            // Preparing Kriging Object
+            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.DistanceArray, kh.DepthArray);
+            var valueVector = Vector<float>.Build.DenseOfArray(kh.KarousHjeltArray);
+            
+            var vgram = new Powvargram(inputPoints, valueVector);
+            Debug.WriteLine("Done with variogram");
+            var krig = new Kriging(inputPoints, valueVector, vgram);
+            Debug.WriteLine("Done with kriging");
+
+
+            var xmax = kh.DistanceArray.Max();
+            var xmin = kh.DistanceArray.Min();
+            var ymax = kh.DepthArray.Max();
+            var ymin = kh.DepthArray.Min();
+
+            // Calculate axis range
+            var dx = xmax - xmin;
+            var dy = Math.Abs(Math.Abs(ymax) - Math.Abs(ymin));
+
+
+            // Determine spacing with nx points grid
+            const int nx = 200;
+            var xSpacing = dx / (nx - 1);
+
+            // Determine number of y grid so that the space is equal
+            var ny = Convert.ToInt32(Math.Ceiling(dy / xSpacing));
+            var ySpacing = dy / (ny - 1);
+
+            Debug.WriteLine($"{nx} {ny} {xSpacing} {ySpacing}");
+
+
+            // Create the heatmap series
+
+            var khmap = new HeatMapSeries
+            {
+                X0 = kh.DistanceArray.Min(),
+                X1 = kh.DistanceArray.Max(),
+                Y0 = kh.DepthArray.Max(),
+                Y1 = kh.DepthArray.Min(),
+                Data = new double[nx, ny],
+                Interpolate = false
+            };
+
+            int progress = 0;
+           
+            khmap.Data.Fill2D(double.NaN);
+            // Filling the data by interpolating using kriging
+            for (var i = 0; i < ny; i++)
+            {
+                for (var j = 0; j < nx; j++)
+                {
+                    progress++;
+                    krigingWorker.ReportProgress((progress*100)/(nx*ny));
+                    var point2Interpolate =
+                        Vector<float>.Build.DenseOfArray(new[] { xmin + (j * xSpacing), ymax - (i * ySpacing) });
+                    khmap.Data[j, i] = krig.Interpolate(point2Interpolate);
+                    
+                }
+            }
+
+            e.Result = new Tuple<HeatMapSeries, string, float> (khmap, kh.Name, kh.SkinDepth);
+        }
+
+        private void krigingWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            tsStatusLabel.Text = string.Empty;
+            krigingProgressBar.Value = 0;
+            krigingProgressBar.Visible = false;
+            var result = e.Result as Tuple<HeatMapSeries, string, float>;
+            if (result == null) return;
+            var form2 = new ChartPlot(result.Item2, result.Item1, result.Item3) {MdiParent = this};
+            form2.Show();
+        }
+
+        private void krigingWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            krigingProgressBar.Value = e.ProgressPercentage;
         }
     }
 }

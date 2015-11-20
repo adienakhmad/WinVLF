@@ -67,13 +67,10 @@
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
             this.tsmPlot = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmDeleteRaw = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmDeleteFraser = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmDeleteKH = new System.Windows.Forms.ToolStripMenuItem();
             this.tsAddData = new System.Windows.Forms.ToolStripButton();
             this.tsPlotChart = new System.Windows.Forms.ToolStripButton();
@@ -98,6 +95,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.closeStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.krigingWorker = new System.ComponentModel.BackgroundWorker();
+            this.krigingProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.tsToolBar.SuspendLayout();
             this.cmListViewRaw.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -147,16 +146,15 @@
             // 
             this.cmListViewRaw.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmPlot,
-            this.viewToolStripMenuItem,
             this.tsmExport,
             this.tsmDeleteRaw});
             this.cmListViewRaw.Name = "cmListView";
-            this.cmListViewRaw.Size = new System.Drawing.Size(147, 92);
+            this.cmListViewRaw.Size = new System.Drawing.Size(145, 70);
             // 
             // tsmExport
             // 
             this.tsmExport.Name = "tsmExport";
-            this.tsmExport.Size = new System.Drawing.Size(146, 22);
+            this.tsmExport.Size = new System.Drawing.Size(144, 22);
             this.tsmExport.Text = "Export To File";
             // 
             // menuStrip1
@@ -214,7 +212,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsStatusLabel});
+            this.tsStatusLabel,
+            this.krigingProgressBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 659);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1093, 22);
@@ -327,16 +326,15 @@
             // 
             this.cmListViewFraser.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem2,
-            this.toolStripMenuItem3,
             this.toolStripMenuItem4,
             this.tsmDeleteFraser});
             this.cmListViewFraser.Name = "cmListView";
-            this.cmListViewFraser.Size = new System.Drawing.Size(147, 92);
+            this.cmListViewFraser.Size = new System.Drawing.Size(145, 70);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(146, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem4.Text = "Export To File";
             // 
             // label3
@@ -390,16 +388,15 @@
             // 
             this.cmListViewKH.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem6,
-            this.toolStripMenuItem7,
             this.toolStripMenuItem8,
             this.tsmDeleteKH});
             this.cmListViewKH.Name = "cmListView";
-            this.cmListViewKH.Size = new System.Drawing.Size(147, 92);
+            this.cmListViewKH.Size = new System.Drawing.Size(145, 70);
             // 
             // toolStripMenuItem8
             // 
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(146, 22);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem8.Text = "Export To File";
             // 
             // importRawDialog
@@ -420,21 +417,14 @@
             // 
             this.tsmPlot.Image = global::SimpleVLF.Properties.Resources.system_monitor;
             this.tsmPlot.Name = "tsmPlot";
-            this.tsmPlot.Size = new System.Drawing.Size(146, 22);
+            this.tsmPlot.Size = new System.Drawing.Size(144, 22);
             this.tsmPlot.Text = "Plot Chart";
-            // 
-            // viewToolStripMenuItem
-            // 
-            this.viewToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.table;
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.viewToolStripMenuItem.Text = "View As Table";
             // 
             // tsmDeleteRaw
             // 
             this.tsmDeleteRaw.Image = global::SimpleVLF.Properties.Resources.cross_script;
             this.tsmDeleteRaw.Name = "tsmDeleteRaw";
-            this.tsmDeleteRaw.Size = new System.Drawing.Size(146, 22);
+            this.tsmDeleteRaw.Size = new System.Drawing.Size(144, 22);
             this.tsmDeleteRaw.Text = "Delete";
             this.tsmDeleteRaw.Click += new System.EventHandler(this.tsmDelete_Click);
             // 
@@ -442,21 +432,14 @@
             // 
             this.toolStripMenuItem2.Image = global::SimpleVLF.Properties.Resources.system_monitor;
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(146, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem2.Text = "Plot Chart";
-            // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Image = global::SimpleVLF.Properties.Resources.table;
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(146, 22);
-            this.toolStripMenuItem3.Text = "View As Table";
             // 
             // tsmDeleteFraser
             // 
             this.tsmDeleteFraser.Image = global::SimpleVLF.Properties.Resources.cross_script;
             this.tsmDeleteFraser.Name = "tsmDeleteFraser";
-            this.tsmDeleteFraser.Size = new System.Drawing.Size(146, 22);
+            this.tsmDeleteFraser.Size = new System.Drawing.Size(144, 22);
             this.tsmDeleteFraser.Text = "Delete";
             this.tsmDeleteFraser.Click += new System.EventHandler(this.tsmDeleteFraser_Click);
             // 
@@ -464,21 +447,14 @@
             // 
             this.toolStripMenuItem6.Image = global::SimpleVLF.Properties.Resources.system_monitor;
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(146, 22);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(144, 22);
             this.toolStripMenuItem6.Text = "Plot Chart";
-            // 
-            // toolStripMenuItem7
-            // 
-            this.toolStripMenuItem7.Image = global::SimpleVLF.Properties.Resources.table;
-            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(146, 22);
-            this.toolStripMenuItem7.Text = "View As Table";
             // 
             // tsmDeleteKH
             // 
             this.tsmDeleteKH.Image = global::SimpleVLF.Properties.Resources.cross_script;
             this.tsmDeleteKH.Name = "tsmDeleteKH";
-            this.tsmDeleteKH.Size = new System.Drawing.Size(146, 22);
+            this.tsmDeleteKH.Size = new System.Drawing.Size(144, 22);
             this.tsmDeleteKH.Text = "Delete";
             this.tsmDeleteKH.Click += new System.EventHandler(this.tsmDeleteKH_Click);
             // 
@@ -669,6 +645,7 @@
             // 
             // tsStatusLabel
             // 
+            this.tsStatusLabel.Margin = new System.Windows.Forms.Padding(0, 3, 10, 2);
             this.tsStatusLabel.Name = "tsStatusLabel";
             this.tsStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
@@ -678,6 +655,19 @@
             this.closeStripMenuItem.Size = new System.Drawing.Size(32, 19);
             this.closeStripMenuItem.Text = "Close";
             this.closeStripMenuItem.Click += new System.EventHandler(this.closeStripMenuItem_Click);
+            // 
+            // krigingWorker
+            // 
+            this.krigingWorker.WorkerReportsProgress = true;
+            this.krigingWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.krigingWorker_DoWork);
+            this.krigingWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.krigingWorker_ProgressChanged);
+            this.krigingWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.krigingWorker_RunWorkerCompleted);
+            // 
+            // krigingProgressBar
+            // 
+            this.krigingProgressBar.Name = "krigingProgressBar";
+            this.krigingProgressBar.Size = new System.Drawing.Size(250, 16);
+            this.krigingProgressBar.Visible = false;
             // 
             // SVLF
             // 
@@ -759,7 +749,6 @@
         private System.Windows.Forms.ToolStripButton tsbMovAvg;
         private System.Windows.Forms.ToolStripButton tsFraserFilter;
         private System.Windows.Forms.ToolStripButton tsKarousHjelt;
-        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsmDeleteRaw;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -767,12 +756,10 @@
         private System.Windows.Forms.OpenFileDialog importRawDialog;
         private System.Windows.Forms.ContextMenuStrip cmListViewFraser;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem tsmDeleteFraser;
         private System.Windows.Forms.ContextMenuStrip cmListViewKH;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem8;
         private System.Windows.Forms.ToolStripMenuItem tsmDeleteKH;
         private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
@@ -782,6 +769,8 @@
         private System.Windows.Forms.SaveFileDialog saveProjectDialog;
         private System.Windows.Forms.ToolStripStatusLabel tsStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem closeStripMenuItem;
+        private System.ComponentModel.BackgroundWorker krigingWorker;
+        private System.Windows.Forms.ToolStripProgressBar krigingProgressBar;
     }
 }
 
