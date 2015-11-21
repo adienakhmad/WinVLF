@@ -47,8 +47,10 @@
     <Compile Include="Data\FraserData.cs" />
     <Compile Include="Data\KarousHjeltData.cs" />
     <Compile Include="Data\TiltData.cs" />
+    <Compile Include="Data\VlfDataBase.cs" />
     <Compile Include="Data\VlfDataReader.cs" />
     <Compile Include="Gridding\Kriging.cs" />
+    <Compile Include="Gridding\Shepard.cs" />
     <Compile Include="Processing\VlfFilter.cs" />
     <Compile Include="Processing\VlfInterpolation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

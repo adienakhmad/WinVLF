@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace VLFLib.Gridding
@@ -23,6 +24,7 @@ namespace VLFLib.Gridding
             _yvi = Vector<float>.Build.Dense(_npt + 1);
 
             var v = Matrix<float>.Build.Dense(_npt + 1, _npt + 1);
+            Debug.WriteLine($"The size of matrix to be solved: {v.RowCount} x {v.ColumnCount}");
             var y = Vector<float>.Build.Dense(_npt + 1);
 
             for (var i = 0; i < _npt; i++)
@@ -35,6 +37,7 @@ namespace VLFLib.Gridding
                 v[i, _npt] = v[_npt, i] = 1.0f;
             }
             v[_npt, _npt] = y[_npt] = 0f;
+            Debug.WriteLine("LU Decomposing..");
             _yvi = v.LU().Solve(y);
         }
 

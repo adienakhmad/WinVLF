@@ -15,7 +15,17 @@ namespace VLFLib.Data
 
         public float[] Tildata { get; }
 
-        public bool IsAscending1 { get; }
+        public bool IsAscending
+        {
+            get
+            {
+                for (var i = 0; i < Count - 1; i++)
+                {
+                    if (DistancesArray[i] > DistancesArray[i + 1]) return false;
+                }
+                return true;
+            }
+        }
 
         public TiltData(string name, int n, float spacing, float[] distanceArray, float[] tiltdata)
         {
@@ -24,7 +34,7 @@ namespace VLFLib.Data
             Spacing = spacing;
             DistancesArray = distanceArray;
             Tildata = tiltdata;
-            IsAscending1 = CheckifAscending();
+            
         }
 
         private bool CheckifAscending()
@@ -35,11 +45,6 @@ namespace VLFLib.Data
             }
 
             return true;
-        }
-
-        public bool IsAscending()
-        {
-            return IsAscending1;
         }
 
         public void Export(string filename)

@@ -231,8 +231,7 @@ namespace SimpleVLF
 
             var kh = VlfFilter.KarousHjelt(tiltData, skin);
             kh.Name = name;
-
-
+            
             var item = new ListViewItem()
             {
                 Name = name,
@@ -243,6 +242,14 @@ namespace SimpleVLF
             item.SubItems.Add(kh.Spacing.ToString(CultureInfo.InvariantCulture));
             item.SubItems.Add(kh.SkinDepth.ToString(CultureInfo.InvariantCulture));
             listViewKH.Items.Add(item);
+
+            if (kh.RawLength > 150)
+            {
+                MessageBox.Show(
+                    @"Due to the limitation of gridding implementation in this version, the filtered result could not be shown. However, you can still export the result into an external file.",
+                    @"Data Too Large To Grid", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
             tsStatusLabel.Text = @"Building grid..";
             krigingProgressBar.Visible = true;
             krigingWorker.RunWorkerAsync(kh);
@@ -348,29 +355,12 @@ namespace SimpleVLF
             }
         }
 
-        private void tsmDeleteFraser_Click(object sender, EventArgs e)
-        {
-            if (listViewFraser.SelectedItems.Count == 0) return;
-            foreach (ListViewItem item in listViewFraser.SelectedItems)
-            {
-                listViewFraser.Items.Remove(item);
-            }
-        }
-
-        private void tsmDeleteKH_Click(object sender, EventArgs e)
-        {
-            if (listViewKH.SelectedItems.Count == 0) return;
-            foreach (ListViewItem item in listViewKH.SelectedItems)
-            {
-                listViewKH.Items.Remove(item);
-            }
-        }
-
         private void tsmDelete_Click(object sender, EventArgs e)
         {
-            var cm = sender as ContextMenuStrip;
+            var tsm = sender as ToolStripMenuItem;
+            var cm = tsm?.Owner as ContextMenuStrip;
             var lv = cm?.SourceControl as ListView;
-
+           
             if (lv == null) return;
             foreach (ListViewItem item in lv.SelectedItems)
             {
@@ -500,9 +490,10 @@ namespace SimpleVLF
         {
             Debug.WriteLine("Starting to do some work");
             var kh = e.Argument as KarousHjeltData;
+            if (kh == null) return;
             Debug.WriteLine($"Will process {kh.KarousHjeltArray.Length} datas");
 
-            // Preparing Kriging Object
+            // Preparing Matrix Object
             var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.DistanceArray, kh.DepthArray);
             var valueVector = Vector<float>.Build.DenseOfArray(kh.KarousHjeltArray);
             
@@ -510,6 +501,8 @@ namespace SimpleVLF
             Debug.WriteLine("Done with variogram");
             var krig = new Kriging(inputPoints, valueVector, vgram);
             Debug.WriteLine("Done with kriging");
+
+            //var krig = new Shepard(inputPoints,valueVector);
 
 
             var xmax = kh.DistanceArray.Max();
@@ -542,7 +535,8 @@ namespace SimpleVLF
                 Y0 = kh.DepthArray.Max(),
                 Y1 = kh.DepthArray.Min(),
                 Data = new double[nx, ny],
-                Interpolate = false
+                Interpolate = false,
+                CoordinateDefinition = HeatMapCoordinateDefinition.Edge
             };
 
             int progress = 0;

@@ -17,6 +17,13 @@ namespace SimpleVLF
             InitializeComponent();
             plotView1.Model = GraphTilt(title);
             AddSeries(data);
+            Text = $"Real Comp [{title}]";
+        }
+
+        public override sealed string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
         }
 
         public ChartPlot(string title, FraserData data)
@@ -24,6 +31,7 @@ namespace SimpleVLF
             InitializeComponent();
             plotView1.Model = GraphFraser(title);
             AddSeries(data);
+            Text = $"Fraser [{title}]";
         }
 
         public ChartPlot(string title, HeatMapSeries khmap, float skin)
@@ -31,6 +39,7 @@ namespace SimpleVLF
             InitializeComponent();
             plotView1.Model = HeatMapModel(title, skin);
             plotView1.Model.Series.Add(khmap);
+            Text = $"KH Filter [{title}]";
         }
 
         private void AddSeries(TiltData data)
@@ -92,6 +101,7 @@ namespace SimpleVLF
             {
                 Position = AxisPosition.Right,
                 InvalidNumberColor = OxyColors.Transparent,
+                //Palette = OxyPalettes.BlueWhiteRed(128)
                 Palette = OxyPalettes.Jet(256)
             };
             plotModel1.Axes.Add(linearColorAxis1);
