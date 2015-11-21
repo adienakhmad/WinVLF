@@ -30,47 +30,47 @@ namespace SimpleVLF
         {
             CloseProject();
 
-            foreach (var data in proj.TiltDatas)
+            foreach (var tiltData in proj.TiltDatas)
             {
                 var item = new ListViewItem()
                 {
-                    Name = data.Name,
-                    Text = data.Name,
-                    Tag = data
+                    Name = tiltData.Name,
+                    Text = tiltData.Name,
+                    Tag = tiltData
                 };
 
-                item.SubItems.Add(data.Count.ToString());
-                item.SubItems.Add(data.Spacing.ToString(CultureInfo.InvariantCulture));
-                if (!data.IsAscending()) item.BackColor = Color.Orange;
+                item.SubItems.Add(tiltData.Npts.ToString());
+                item.SubItems.Add(tiltData.Spacing.ToString(CultureInfo.InvariantCulture));
+                if (!tiltData.IsAscending) item.BackColor = Color.Orange;
                 listViewRaw.Items.Add(item);
             }
 
-            foreach (var data in proj.FraserDatas)
+            foreach (var fraserData in proj.FraserDatas)
             {
                 var item = new ListViewItem()
                 {
-                    Name = data.Name,
-                    Text = data.Name,
-                    Tag = data
+                    Name = fraserData.Name,
+                    Text = fraserData.Name,
+                    Tag = fraserData
                 };
 
-                item.SubItems.Add(data.Count.ToString());
-                item.SubItems.Add(data.Spacing.ToString(CultureInfo.InvariantCulture));
+                item.SubItems.Add(fraserData.Npts.ToString());
+                item.SubItems.Add(fraserData.Spacing.ToString(CultureInfo.InvariantCulture));
                 listViewFraser.Items.Add(item);
             }
 
-            foreach (var data in proj.KarousHjeltDatas)
+            foreach (var karousHjeltData in proj.KarousHjeltDatas)
             {
                 var item = new ListViewItem()
                 {
-                    Name = data.Name,
-                    Text = data.Name,
-                    Tag = data
+                    Name = karousHjeltData.Name,
+                    Text = karousHjeltData.Name,
+                    Tag = karousHjeltData
                 };
 
-                item.SubItems.Add(data.DepthArray.Min().ToString(CultureInfo.InvariantCulture));
-                item.SubItems.Add(data.Spacing.ToString(CultureInfo.InvariantCulture));
-                item.SubItems.Add(data.SkinDepth.ToString(CultureInfo.InvariantCulture));
+                item.SubItems.Add(karousHjeltData.Depths.Min().ToString(CultureInfo.InvariantCulture));
+                item.SubItems.Add(karousHjeltData.Spacing.ToString(CultureInfo.InvariantCulture));
+                item.SubItems.Add(karousHjeltData.SkinDepth.ToString(CultureInfo.InvariantCulture));
                 listViewKH.Items.Add(item);
             }
 

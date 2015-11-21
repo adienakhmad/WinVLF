@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
-using MathNet.Numerics.LinearAlgebra;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using VLFLib.Data;
-using VLFLib.Gridding;
 
 namespace SimpleVLF
 {
@@ -37,9 +34,10 @@ namespace SimpleVLF
         public ChartPlot(string title, HeatMapSeries khmap, float skin)
         {
             InitializeComponent();
+            Text = $"KH Filter [{title}]";
             plotView1.Model = HeatMapModel(title, skin);
             plotView1.Model.Series.Add(khmap);
-            Text = $"KH Filter [{title}]";
+            
         }
 
         private void AddSeries(TiltData data)
@@ -52,9 +50,9 @@ namespace SimpleVLF
                 Color = OxyColors.DarkOrange
             };
 
-            for (var i = 0; i < data.Count; i++)
+            for (var i = 0; i < data.Npts; i++)
             {
-                tiltSeries.Points.Add(new DataPoint(data.GetDistanceAt(i), data.GetTiltAt(i)));
+                tiltSeries.Points.Add(new DataPoint(data.Distances[i], data.Values[i]));
             }
 
             plotView1.Model.Series.Add(tiltSeries);
@@ -71,9 +69,9 @@ namespace SimpleVLF
             };
 
 
-            for (var i = 0; i < data.Count; i++)
+            for (var i = 0; i < data.Npts; i++)
             {
-                fraserSeries.Points.Add(new DataPoint(data.Distances[i], data.FraserValue[i]));
+                fraserSeries.Points.Add(new DataPoint(data.Distances[i], data.Values[i]));
             }
 
             plotView1.Model.Series.Add(fraserSeries);
@@ -89,7 +87,7 @@ namespace SimpleVLF
             var plotModel1 = new PlotModel
             {
                 PlotType = PlotType.Cartesian,
-                Title = $"Apparent Conductivity - {title}",
+                Title = $"KH Filtered - {title}",
                 Subtitle = subtitle,
                 SubtitleFontSize = 10,
                 TitleFont = "Tahoma",

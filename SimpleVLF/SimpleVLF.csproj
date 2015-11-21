@@ -188,6 +188,21 @@
   <ItemGroup>
     <None Include="Resources\disks-black.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\chart--arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layer-flip-vertical.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\layer-flip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\task--arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\map--plus.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

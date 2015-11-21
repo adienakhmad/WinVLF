@@ -5,7 +5,7 @@ using System.Text;
 
 namespace VLFLib.Data
 {
-    public  abstract class VlfDataBase
+    public  abstract class VLFDataBase
     {
         public string Name { get; private set; }
         public int Npts { get; private set; }
@@ -13,7 +13,7 @@ namespace VLFLib.Data
         public float[] Distances { get; private set; }
         public float[] Values { get; private set; }
 
-        protected VlfDataBase(string name, int npt, float spacing, float[] distances, float[] values)
+        protected VLFDataBase(string name, int npt, float spacing, float[] distances, float[] values)
         {
             Name = name;
             Npts = npt;
@@ -24,6 +24,25 @@ namespace VLFLib.Data
         public void Rename(string newname)
         {
             Name = newname;
+        }
+
+        public virtual void ReverseSign()
+        {
+            for (var i = 0; i < Npts; i++)
+            {
+                Values[i] *= -1;
+            }
+        }
+
+        public virtual void FlipDistance()
+        {
+            Array.Reverse(Values);
+        }
+
+        public virtual void FlipThenReverse()
+        {
+            FlipDistance();
+            ReverseSign();
         }
 
         public abstract void ExportToFile(string filename);

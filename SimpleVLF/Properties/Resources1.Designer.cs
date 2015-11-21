@@ -143,6 +143,16 @@ namespace SimpleVLF.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap chart__arrow {
+            get {
+                object obj = ResourceManager.GetObject("chart--arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap cross_button {
             get {
                 object obj = ResourceManager.GetObject("cross_button", resourceCulture);
@@ -223,9 +233,39 @@ namespace SimpleVLF.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap layer_flip {
+            get {
+                object obj = ResourceManager.GetObject("layer-flip", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap layer_flip_vertical {
+            get {
+                object obj = ResourceManager.GetObject("layer-flip-vertical", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap layer_resize {
             get {
                 object obj = ResourceManager.GetObject("layer_resize", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap map__plus {
+            get {
+                object obj = ResourceManager.GetObject("map--plus", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -286,6 +326,16 @@ namespace SimpleVLF.Properties {
         internal static System.Drawing.Bitmap table_heatmap {
             get {
                 object obj = ResourceManager.GetObject("table_heatmap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap task__arrow {
+            get {
+                object obj = ResourceManager.GetObject("task--arrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

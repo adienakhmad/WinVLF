@@ -40,7 +40,7 @@ namespace SimpleVLF
 
             try
             {
-                input = VlfDataReader.Read(importRawDialog.FileName);
+                input = VLFDataReader.Read(importRawDialog.FileName);
             }
             catch (Exception)
             {
@@ -51,10 +51,10 @@ namespace SimpleVLF
             var newname = FindUniqeName(input.Name, listViewRaw);
 
             var item = new ListViewItem {Text = newname, Name = newname};
-            item.SubItems.Add(input.Count.ToString());
+            item.SubItems.Add(input.Npts.ToString());
             item.SubItems.Add(input.Spacing.ToString(CultureInfo.InvariantCulture));
             item.Tag = input;
-            if (!input.IsAscending()) item.BackColor = Color.Orange;
+            if (!input.IsAscending) item.BackColor = Color.Orange;
             listViewRaw.Items.Add(item);
 
             var form2 = new ChartPlot(item.Name, input)
@@ -70,7 +70,8 @@ namespace SimpleVLF
             {
                 if (listViewRaw.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK,
+                        MessageBoxIcon.Asterisk);
                     return;
                 }
 
@@ -88,7 +89,8 @@ namespace SimpleVLF
             {
                 if (listViewFraser.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK,
+                        MessageBoxIcon.Asterisk);
                     return;
                 }
 
@@ -106,7 +108,8 @@ namespace SimpleVLF
             {
                 if (listViewKH.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK,
+                        MessageBoxIcon.Asterisk);
                     return;
                 }
                 var selected = listViewKH.SelectedItems[0];
@@ -125,7 +128,8 @@ namespace SimpleVLF
         {
             if (!listViewRaw.Focused || listViewRaw.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"You have not selected any tilt data.",@"No Data",MessageBoxButtons.OK,MessageBoxIcon.Asterisk);
+                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
                 return;
             }
 
@@ -135,9 +139,9 @@ namespace SimpleVLF
 
 
             var data = listViewRaw.SelectedItems[0].Tag as TiltData;
-            if (data != null && ((Math.Abs(order)) <= 1 || order > data.Count))
+            if (data != null && ((Math.Abs(order)) <= 1 || order > data.Npts))
             {
-                MessageBox.Show(@"Invalid filter order.",@"Error");
+                MessageBox.Show(@"Invalid filter order.", @"Error");
                 return;
             }
 
@@ -147,10 +151,10 @@ namespace SimpleVLF
                 return;
 
             var smooth = VlfFilter.MovingAverage(data, Convert.ToInt32(order));
-            smooth.Name = newname;
+            smooth.Rename(newname);
 
             var item = new ListViewItem {Text = newname, Name = newname};
-            item.SubItems.Add(smooth.Count.ToString());
+            item.SubItems.Add(smooth.Npts.ToString());
             item.SubItems.Add(smooth.Spacing.ToString(CultureInfo.InvariantCulture));
             item.Tag = smooth;
             listViewRaw.Items.Add(item);
@@ -166,12 +170,13 @@ namespace SimpleVLF
         {
             if (listViewRaw.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
                 return;
             }
 
             var tiltData = listViewRaw.SelectedItems[0].Tag as TiltData;
-            if (tiltData != null && tiltData.Count < 4)
+            if (tiltData != null && tiltData.Npts < 4)
             {
                 MessageBox.Show(@"There should be minimum of 4 data for this filter to work.");
                 return;
@@ -183,7 +188,7 @@ namespace SimpleVLF
 
             // Do Fraser Filtering
             var fraser = VlfFilter.Fraser(tiltData);
-            fraser.Name = name;
+            fraser.Rename(name);
 
             // Create a new listview item to be added to ListViewFraser
             var item = new ListViewItem
@@ -193,7 +198,7 @@ namespace SimpleVLF
                 Tag = fraser
             };
 
-            item.SubItems.Add(fraser.Count.ToString());
+            item.SubItems.Add(fraser.Npts.ToString());
             item.SubItems.Add(fraser.Spacing.ToString(CultureInfo.InvariantCulture));
             listViewFraser.Items.Add(item);
 
@@ -208,12 +213,13 @@ namespace SimpleVLF
         {
             if (listViewRaw.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK,
+                    MessageBoxIcon.Asterisk);
                 return;
             }
 
             var tiltData = listViewRaw.SelectedItems[0].Tag as TiltData;
-            if (tiltData != null && tiltData.Count < 6)
+            if (tiltData != null && tiltData.Npts < 6)
             {
                 MessageBox.Show(@"There should be minimum of 7 data for this filter to work.");
                 return;
@@ -226,19 +232,19 @@ namespace SimpleVLF
             var skin = 0f;
             if (
                 InputPrompt.InputNumberBox("Karous Hjelt-Filter",
-                    "Skin depth normalization. Enter 0 to ignore skin depth", ref skin) != DialogResult.OK)
+                    $"Skin depth normalization. Enter 0 to ignore skin depth", ref skin) != DialogResult.OK)
                 return;
 
             var kh = VlfFilter.KarousHjelt(tiltData, skin);
-            kh.Name = name;
-            
+            kh.Rename(name);
+
             var item = new ListViewItem()
             {
                 Name = name,
                 Text = name,
                 Tag = kh
             };
-            item.SubItems.Add(kh.DepthArray.Min().ToString(CultureInfo.InvariantCulture));
+            item.SubItems.Add((-1*kh.Depths.Min()).ToString(CultureInfo.InvariantCulture));
             item.SubItems.Add(kh.Spacing.ToString(CultureInfo.InvariantCulture));
             item.SubItems.Add(kh.SkinDepth.ToString(CultureInfo.InvariantCulture));
             listViewKH.Items.Add(item);
@@ -360,7 +366,7 @@ namespace SimpleVLF
             var tsm = sender as ToolStripMenuItem;
             var cm = tsm?.Owner as ContextMenuStrip;
             var lv = cm?.SourceControl as ListView;
-           
+
             if (lv == null) return;
             foreach (ListViewItem item in lv.SelectedItems)
             {
@@ -370,7 +376,7 @@ namespace SimpleVLF
 
         private void tsInterpolate_Click(object sender, EventArgs e)
         {
-            if(!listViewRaw.Focused || listViewRaw.SelectedItems.Count == 0)
+            if (!listViewRaw.Focused || listViewRaw.SelectedItems.Count == 0)
             {
                 MessageBox.Show(@"You have not selected any data.");
                 return;
@@ -381,30 +387,39 @@ namespace SimpleVLF
             if (data == null) return;
 
             var spacing = Convert.ToSingle(Math.Floor(data.Spacing));
-
-            if (InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new spacing", ref spacing) != DialogResult.OK)
+            if (InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new spacing", ref spacing) !=
+                DialogResult.OK)
                 return;
 
-            var npt = ((data.MaxDistance() - data.MinDistance())/spacing) + 1;
-            if (InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new npts (number of points).", ref npt) != DialogResult.OK)
+            var npt = Convert.ToInt32(((data.Distances.Max() - data.Distances.Min())/spacing) + 1);
+            if (
+                InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new npts (number of points).",
+                    ref npt) != DialogResult.OK)
                 return;
 
-            if ((data.MinDistance() + ((npt-1)*spacing) > data.MaxDistance()))
+            if ((data.Distances.Min() + ((npt - 1)*spacing) > data.Distances.Max()))
             {
-                MessageBox.Show(@"npts is too large, maximum distance exceeds original data.");
-                Debug.WriteLine((data.MinDistance() + (npt * spacing)));
-                return;
+                var dlg =
+                    MessageBox.Show(@"The new interpolated max distances will exceed the original max distances." +
+                                    $"{Environment.NewLine}" +
+                                    $"{Environment.NewLine}Original: {data.Distances.Max()} m, Interpolated: {data.Distances.Min() + ((npt - 1)*spacing)} m." +
+                                    $"{Environment.NewLine}" +
+                                    $"{Environment.NewLine}Do you want to continue?", @"Exceed Original Max Distances",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                Debug.WriteLine((data.Distances.Min() + (npt*spacing)));
+                if (dlg == DialogResult.No) return;
             }
 
 
             var newname = FindUniqeName($"{data.Name}_Interpolated", listViewRaw);
-            if (InputPrompt.InputStringBox("Cubic Spline Interpolation", "Enter a name.", ref newname) != DialogResult.OK)
+            if (InputPrompt.InputStringBox("Cubic Spline Interpolation", "Enter a name.", ref newname) !=
+                DialogResult.OK)
                 return;
 
-            var tiltData = VlfInterpolation.CubicSplineNatural(data, Convert.ToSingle(spacing),Convert.ToInt32(npt));
-            tiltData.Name = newname;
-            var item = new ListViewItem { Text = newname, Name = newname };
-            item.SubItems.Add(tiltData.Count.ToString());
+            var tiltData = VlfInterpolation.CubicSplineNatural(data, Convert.ToSingle(spacing), npt);
+            tiltData.Rename(newname);
+            var item = new ListViewItem {Text = newname, Name = newname};
+            item.SubItems.Add(tiltData.Npts.ToString());
             item.SubItems.Add(tiltData.Spacing.ToString(CultureInfo.InvariantCulture));
             item.Tag = tiltData;
             listViewRaw.Items.Add(item);
@@ -426,7 +441,7 @@ namespace SimpleVLF
             var dlg = saveProjectDialog.ShowDialog();
             if (dlg != DialogResult.OK) return;
 
-            VlfProjectHandler.Save(SaveProject(saveProjectDialog.FileName),saveProjectDialog.FileName);
+            VlfProjectHandler.Save(SaveProject(saveProjectDialog.FileName), saveProjectDialog.FileName);
             _currentFile = new FileInfo(saveProjectDialog.FileName);
             Text = $"WinVLF - [{_currentFile.Name}]";
             tsStatusLabel.Text = string.Empty;
@@ -438,7 +453,8 @@ namespace SimpleVLF
             if (dlg != DialogResult.OK) return;
             LoadProject(VlfProjectHandler.Read(openProjectDialog.FileName));
             _currentFile = new FileInfo(openProjectDialog.FileName);
-            MessageBox.Show(@"Project opened succesfully.",@"Open Project",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            MessageBox.Show(@"Project opened succesfully.", @"Open Project", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
             tsStatusLabel.Text = string.Empty;
         }
 
@@ -453,13 +469,13 @@ namespace SimpleVLF
 
             switch (dlg)
             {
-                    case DialogResult.Cancel:
+                case DialogResult.Cancel:
                     e.Cancel = true;
                     break;
-                    case DialogResult.OK:
+                case DialogResult.OK:
                     SaveProjectNow();
                     break;
-                    case DialogResult.No:
+                case DialogResult.No:
                     break;
             }
         }
@@ -491,12 +507,12 @@ namespace SimpleVLF
             Debug.WriteLine("Starting to do some work");
             var kh = e.Argument as KarousHjeltData;
             if (kh == null) return;
-            Debug.WriteLine($"Will process {kh.KarousHjeltArray.Length} datas");
+            Debug.WriteLine($"Will process {kh.Values.Length} datas");
 
             // Preparing Matrix Object
-            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.DistanceArray, kh.DepthArray);
-            var valueVector = Vector<float>.Build.DenseOfArray(kh.KarousHjeltArray);
-            
+            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.Distances, kh.Depths);
+            var valueVector = Vector<float>.Build.DenseOfArray(kh.Values);
+
             var vgram = new Powvargram(inputPoints, valueVector);
             Debug.WriteLine("Done with variogram");
             var krig = new Kriging(inputPoints, valueVector, vgram);
@@ -505,10 +521,10 @@ namespace SimpleVLF
             //var krig = new Shepard(inputPoints,valueVector);
 
 
-            var xmax = kh.DistanceArray.Max();
-            var xmin = kh.DistanceArray.Min();
-            var ymax = kh.DepthArray.Max();
-            var ymin = kh.DepthArray.Min();
+            var xmax = kh.Distances.Max();
+            var xmin = kh.Distances.Min();
+            var ymax = kh.Depths.Max();
+            var ymin = kh.Depths.Min();
 
             // Calculate axis range
             var dx = xmax - xmin;
@@ -517,11 +533,11 @@ namespace SimpleVLF
 
             // Determine spacing with nx points grid
             const int nx = 200;
-            var xSpacing = dx / (nx - 1);
+            var xSpacing = dx/(nx - 1);
 
             // Determine number of y grid so that the space is equal
-            var ny = Convert.ToInt32(Math.Ceiling(dy / xSpacing));
-            var ySpacing = dy / (ny - 1);
+            var ny = Convert.ToInt32(Math.Ceiling(dy/xSpacing));
+            var ySpacing = dy/(ny - 1);
 
             Debug.WriteLine($"{nx} {ny} {xSpacing} {ySpacing}");
 
@@ -530,17 +546,17 @@ namespace SimpleVLF
 
             var khmap = new HeatMapSeries
             {
-                X0 = kh.DistanceArray.Min(),
-                X1 = kh.DistanceArray.Max(),
-                Y0 = kh.DepthArray.Max(),
-                Y1 = kh.DepthArray.Min(),
+                X0 = kh.Distances.Min(),
+                X1 = kh.Distances.Max(),
+                Y0 = kh.Depths.Max(),
+                Y1 = kh.Depths.Min(),
                 Data = new double[nx, ny],
                 Interpolate = false,
                 CoordinateDefinition = HeatMapCoordinateDefinition.Edge
             };
 
             int progress = 0;
-           
+
             khmap.Data.Fill2D(double.NaN);
             // Filling the data by interpolating using kriging
             for (var i = 0; i < ny; i++)
@@ -550,13 +566,12 @@ namespace SimpleVLF
                     progress++;
                     krigingWorker.ReportProgress((progress*100)/(nx*ny));
                     var point2Interpolate =
-                        Vector<float>.Build.DenseOfArray(new[] { xmin + (j * xSpacing), ymax - (i * ySpacing) });
+                        Vector<float>.Build.DenseOfArray(new[] {xmin + (j*xSpacing), ymax - (i*ySpacing)});
                     khmap.Data[j, i] = krig.Interpolate(point2Interpolate);
-                    
                 }
             }
 
-            e.Result = new Tuple<HeatMapSeries, string, float> (khmap, kh.Name, kh.SkinDepth);
+            e.Result = new Tuple<HeatMapSeries, string, float>(khmap, kh.Name, kh.SkinDepth);
         }
 
         private void krigingWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)

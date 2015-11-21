@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace SimpleVLF
@@ -60,7 +61,9 @@ namespace SimpleVLF
             label.Text = promptText;
             numBox.Maximum = decimal.MaxValue;
             numBox.Value = Convert.ToDecimal(value);
-            
+            numBox.TextAlign = HorizontalAlignment.Right;
+            numBox.DecimalPlaces = 2;
+
 
             buttonOk.Text = "OK";
             buttonCancel.Text = "Cancel";
@@ -78,7 +81,7 @@ namespace SimpleVLF
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
             form.ClientSize = new Size(396, 107);
-            form.Controls.AddRange(new Control[] { label, numBox, buttonOk, buttonCancel });
+            form.Controls.AddRange(new Control[] {label, numBox, buttonOk, buttonCancel});
             form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
             form.FormBorderStyle = FormBorderStyle.FixedDialog;
             form.StartPosition = FormStartPosition.CenterScreen;
@@ -87,8 +90,12 @@ namespace SimpleVLF
             form.AcceptButton = buttonOk;
             form.CancelButton = buttonCancel;
 
+            numBox.Select();
+            numBox.Select(0, numBox.Text.Length);
             var dialogResult = form.ShowDialog();
             value = Convert.ToSingle(numBox.Value);
+
+
             return dialogResult;
         }
 
@@ -105,7 +112,8 @@ namespace SimpleVLF
             numBox.DecimalPlaces = 0;
             numBox.Maximum = decimal.MaxValue;
             numBox.Value = value;
-            
+            numBox.TextAlign = HorizontalAlignment.Right;
+
 
             buttonOk.Text = "OK";
             buttonCancel.Text = "Cancel";
@@ -123,7 +131,7 @@ namespace SimpleVLF
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
             form.ClientSize = new Size(396, 107);
-            form.Controls.AddRange(new Control[] { label, numBox, buttonOk, buttonCancel });
+            form.Controls.AddRange(new Control[] {label, numBox, buttonOk, buttonCancel});
             form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
             form.FormBorderStyle = FormBorderStyle.FixedDialog;
             form.StartPosition = FormStartPosition.CenterScreen;
@@ -132,8 +140,11 @@ namespace SimpleVLF
             form.AcceptButton = buttonOk;
             form.CancelButton = buttonCancel;
 
+            numBox.Select();
+            numBox.Select(0, numBox.Text.Length);
             var dialogResult = form.ShowDialog();
             value = Convert.ToInt32(numBox.Value);
+
             return dialogResult;
         }
     }

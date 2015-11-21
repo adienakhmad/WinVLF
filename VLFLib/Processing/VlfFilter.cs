@@ -10,31 +10,31 @@ namespace VLFLib.Processing
     {
         public static TiltData MovingAverage(TiltData raw, int order)
         {
-            var npt = raw.Count;
-            var f_len = order - 1;
-            var movDistance = new float[npt -f_len];
-            var movVal = new float[npt- f_len];
+            var npt = raw.Npts;
+            var fLen = order - 1;
+            var movDistance = new float[npt -fLen];
+            var movVal = new float[npt- fLen];
 
-            for (int i = 0; i < npt-f_len; i++)
+            for (int i = 0; i < npt-fLen; i++)
             {
                 var dist = new float[order];
                 var val = new float[order];
 
                 for (int j = 0; j < order; j++)
                 {
-                    dist[j] = raw.GetDistanceAt(i + j);
-                    val[j] = raw.GetTiltAt(i + j);
+                    dist[j] = raw.Distances[i+j];
+                    val[j] = raw.Values[i + j];
                 }
 
                 movDistance[i] = dist.Average();
                 movVal[i] = val.Average();
             }
 
-            return new TiltData($"{raw.Name}_smooth",npt-f_len,raw.Spacing,movDistance,movVal);
+            return new TiltData($"{raw.Name}_smooth",npt-fLen,raw.Spacing,movDistance,movVal);
         }
         public static FraserData Fraser(TiltData raw)
         {
-            var count = raw.Count;
+            var count = raw.Npts;
             var fraserDist = new float[count - 3];
             var fraserVal = new float[count - 3];
 
@@ -44,8 +44,8 @@ namespace VLFLib.Processing
                 var valueInput = new float[4];
                 for (var j = 0; j < 4; j++)
                 {
-                    distanceInput[j] = raw.GetDistanceAt(i + j);
-                    valueInput[j] = raw.GetTiltAt(i + j);
+                    distanceInput[j] = raw.Distances[i+j];
+                    valueInput[j] = raw.Values[i + j];
                 }
 
                 fraserDist[i] = distanceInput.Average();
@@ -70,8 +70,8 @@ namespace VLFLib.Processing
             const float c = 0.5615f;
 
 
-            var x0 = raw.GetDistanceAt(0);
-            var n = raw.Count;
+            var x0 = raw.Distances[0];
+            var n = raw.Npts;
             var depthStep = n/6;
 
             for (var i = 0; i < depthStep; i++)
@@ -89,13 +89,13 @@ namespace VLFLib.Processing
                     var i5 = j + (k*2);
                     var i6 = j + (k*3);
 
-                    var h1 = raw.GetTiltAt(i1);
-                    var h2 = raw.GetTiltAt(i2);
-                    var h3 = raw.GetTiltAt(i3);
-                    var h4 = raw.GetTiltAt(i4);
-                    var h5 = raw.GetTiltAt(i5);
-                    var h6 = raw.GetTiltAt(i6);
-
+                    var h1 = raw.Values[i1];
+                    var h2 = raw.Values[i2];
+                    var h3 = raw.Values[i3];
+                    var h4 = raw.Values[i4];
+                    var h5 = raw.Values[i5];
+                    var h6 = raw.Values[i6];
+                    
                     var distance = xx + ((j - na)*raw.Spacing);
                     var depth = -k*raw.Spacing;
                     var value = (a*h1) + (-b*h2) + (c*h3) + (-c*h4) + (b*h5) + (-a*h6);
@@ -112,7 +112,7 @@ namespace VLFLib.Processing
                 }
             }
 
-            return new KarousHjeltData(raw.Name, raw.Spacing, raw.Count, skindepth, depthStep, distList.ToArray(),
+            return new KarousHjeltData(raw.Name, raw.Spacing, raw.Npts, skindepth, depthStep, distList.ToArray(),
                 depthList.ToArray(), khList.ToArray());
         }
     }
