@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using VLFLib.Data;
 
-namespace SimpleVLF
+namespace VLFLib
 {
     [Serializable]
     public class VlfProject
@@ -13,13 +13,13 @@ namespace SimpleVLF
         public ICollection<FraserData> FraserDatas { get; }
         public ICollection<KarousHjeltData> KarousHjeltDatas { get; }
 
-        public VlfProject(string name1, int version, ICollection<TiltData> tiltDatas, ICollection<FraserData> fraserDatas, ICollection<KarousHjeltData> karousHjeltDatas)
+        public VlfProject(string name, int version, ICollection<TiltData> tiltDatas, ICollection<FraserData> fraserDatas, ICollection<KarousHjeltData> karousHjeltDatas)
         {
             TiltDatas = tiltDatas;
             FraserDatas = fraserDatas;
             KarousHjeltDatas = karousHjeltDatas;
             Version = version;
-            Name = name1;
+            Name = name;
         }
 
         public VlfProject()

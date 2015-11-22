@@ -49,11 +49,14 @@
     <Compile Include="Data\TiltData.cs" />
     <Compile Include="Data\VLFDataBase.cs" />
     <Compile Include="Data\VLFDataReader.cs" />
+    <Compile Include="Gridding\Displacement.cs" />
     <Compile Include="Gridding\Kriging.cs" />
     <Compile Include="Gridding\Shepard.cs" />
     <Compile Include="Processing\VlfFilter.cs" />
     <Compile Include="Processing\VlfInterpolation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VlfProject.cs" />
+    <Compile Include="VlfProjectHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

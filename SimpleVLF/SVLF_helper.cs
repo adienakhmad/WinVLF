@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using VLFLib;
 using VLFLib.Data;
 
 namespace SimpleVLF
 {
     public partial class SVLF
     {
-        private static string FindUniqeName(string originalName, ListView view)
+        private static string FindUniqeName(string originalName, TreeNode node)
         {
             // Find unique name if there is duplicate.
             var num = 2;
             var newname = originalName;
 
-            while (view.Items.ContainsKey(newname))
+            while (node.Nodes.ContainsKey(newname))
             {
                 newname = $"{originalName}({num})";
                 num++;
@@ -32,46 +32,17 @@ namespace SimpleVLF
 
             foreach (var tiltData in proj.TiltDatas)
             {
-                var item = new ListViewItem()
-                {
-                    Name = tiltData.Name,
-                    Text = tiltData.Name,
-                    Tag = tiltData
-                };
-
-                item.SubItems.Add(tiltData.Npts.ToString());
-                item.SubItems.Add(tiltData.Spacing.ToString(CultureInfo.InvariantCulture));
-                if (!tiltData.IsAscending) item.BackColor = Color.Orange;
-                listViewRaw.Items.Add(item);
+                AddNode(tiltData.Title, treeViewMain.Nodes["NodeTilt"], tiltData);
             }
 
             foreach (var fraserData in proj.FraserDatas)
             {
-                var item = new ListViewItem()
-                {
-                    Name = fraserData.Name,
-                    Text = fraserData.Name,
-                    Tag = fraserData
-                };
-
-                item.SubItems.Add(fraserData.Npts.ToString());
-                item.SubItems.Add(fraserData.Spacing.ToString(CultureInfo.InvariantCulture));
-                listViewFraser.Items.Add(item);
+                AddNode(fraserData.Title, treeViewMain.Nodes["NodeFraser"], fraserData);
             }
 
             foreach (var karousHjeltData in proj.KarousHjeltDatas)
             {
-                var item = new ListViewItem()
-                {
-                    Name = karousHjeltData.Name,
-                    Text = karousHjeltData.Name,
-                    Tag = karousHjeltData
-                };
-
-                item.SubItems.Add(karousHjeltData.Depths.Min().ToString(CultureInfo.InvariantCulture));
-                item.SubItems.Add(karousHjeltData.Spacing.ToString(CultureInfo.InvariantCulture));
-                item.SubItems.Add(karousHjeltData.SkinDepth.ToString(CultureInfo.InvariantCulture));
-                listViewKH.Items.Add(item);
+                AddNode(karousHjeltData.Title, treeViewMain.Nodes["NodeKH"], karousHjeltData);
             }
 
             Text = $"WinVLF - [{proj.Name}]";
@@ -80,32 +51,28 @@ namespace SimpleVLF
         private VlfProject SaveProject(string name)
         {
             ICollection<TiltData> tiltDatas =
-                (from ListViewItem item in listViewRaw.Items select item.Tag as TiltData).ToList();
+                (from TreeNode node in treeViewMain.Nodes["NodeTilt"].Nodes select node.Tag as TiltData).ToList();
             ICollection<FraserData> fraserDatas =
-                (from ListViewItem item in listViewFraser.Items select item.Tag as FraserData).ToList();
+                (from TreeNode node in treeViewMain.Nodes["NodeFraser"].Nodes select node.Tag as FraserData).ToList();
             ICollection<KarousHjeltData> khDatas =
-                (from ListViewItem item in listViewKH.Items select item.Tag as KarousHjeltData).ToList();
-
+                (from TreeNode node in treeViewMain.Nodes["NodeKH"].Nodes select node.Tag as KarousHjeltData).ToList();
             return new VlfProject(name, 100, tiltDatas, fraserDatas, khDatas);
         }
 
         private void SaveProjectNow()
         {
+            Debug.WriteLine("Inside save project now.");
+            Debug.WriteLine(_currentFile.FullName);
             if (_currentFile.Exists)
             {
                 File.Delete(_currentFile.FullName);
-                VlfProjectHandler.Save(SaveProject(_currentFile.FullName), _currentFile.FullName);
+                VlfProjectHandler.Save(SaveProject(_currentFile.Name), _currentFile.FullName);
                 tsStatusLabel.Text = $"Last saved on: {DateTime.Now}";
-
+                Debug.WriteLine("File exist, saved..");
             }
             else
             {
-                var dlg = saveProjectDialog.ShowDialog();
-                if (dlg != DialogResult.OK) return;
-
-                VlfProjectHandler.Save(SaveProject(saveProjectDialog.FileName), saveProjectDialog.FileName);
-                _currentFile = new FileInfo(saveProjectDialog.FileName);
-                tsStatusLabel.Text = $"Last saved on: {DateTime.Now}";
+                SaveAsNow();
             }
         }
 
@@ -119,11 +86,39 @@ namespace SimpleVLF
             foreach (var chform in charr)
                 chform.Close();
 
-            listViewRaw.Items.Clear();
-            listViewFraser.Items.Clear();
-            listViewKH.Items.Clear();
+            treeViewMain.Nodes[0].Nodes.Clear();
+            treeViewMain.Nodes[1].Nodes.Clear();
+            treeViewMain.Nodes[2].Nodes.Clear();
+            treeViewMain.Nodes[3].Nodes.Clear();
 
             Text = $"WinVLF - [New Project 1]";
+            propertyGrid1.SelectedObject = null;
+        }
+
+        private void AddNode(string name, TreeNode parentNode, object tag)
+        {
+            var child = new TreeNode
+            {
+                Name = name,
+                Text = name,
+                Tag = tag,
+                SelectedImageIndex = 1,
+                ImageIndex = 0
+            };
+
+            parentNode.Nodes.Add(child);
+            parentNode.Expand();
+            treeViewMain.SelectedNode = child;
+        }
+
+        private DialogResult AskIfSaveFirst(string prompt)
+        {
+            var aliveObject = treeViewMain.Nodes.Cast<TreeNode>().Sum(node => node.Nodes.Count);
+            if (aliveObject == 0) return DialogResult.Abort;
+
+            var dlg = MessageBox.Show($"Do you want to save first before {prompt}?", $"Save before {prompt} ",
+                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            return dlg;
         }
     }
 }

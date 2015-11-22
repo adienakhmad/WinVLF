@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using VLFLib.Data;
+using VLFLib.Gridding;
 
 namespace VLFLib.Processing
 {
@@ -30,7 +31,10 @@ namespace VLFLib.Processing
                 movVal[i] = val.Average();
             }
 
-            return new TiltData($"{raw.Name}_smooth",npt-fLen,raw.Spacing,movDistance,movVal);
+            var displacement = movDistance.First() - raw.Distances.First();
+            var xy = Displacement.NextPoint(raw.X, raw.Y, raw.Bearing, displacement);
+
+            return new TiltData($"{raw.Title}_smooth",npt-fLen,raw.Spacing,xy[0],xy[1],raw.Bearing,movDistance,movVal);
         }
         public static FraserData Fraser(TiltData raw)
         {
@@ -55,7 +59,9 @@ namespace VLFLib.Processing
             Debug.Write("Fraser count: ");
             Debug.WriteLine(count - 3);
 
-            return new FraserData(raw.Name, count - 3, raw.Spacing, fraserDist, fraserVal);
+            var displacement = fraserDist.First() - raw.Distances.First();
+            var xy = Displacement.NextPoint(raw.X, raw.Y, raw.Bearing, displacement);
+            return new FraserData(raw.Title, count - 3, raw.Spacing,xy[0],xy[1],raw.Bearing, fraserDist, fraserVal);
         }
 
         public static KarousHjeltData KarousHjelt(TiltData raw, float skindepth)
@@ -112,7 +118,10 @@ namespace VLFLib.Processing
                 }
             }
 
-            return new KarousHjeltData(raw.Name, raw.Spacing, raw.Npts, skindepth, depthStep, distList.ToArray(),
+            var displacement = 3*raw.Spacing;
+            var xy = Displacement.NextPoint(raw.X, raw.Y, raw.Bearing, displacement);
+
+            return new KarousHjeltData(raw.Title, raw.Spacing, raw.Npts, skindepth, depthStep, xy[0], xy[1], raw.Bearing, distList.ToArray(),
                 depthList.ToArray(), khList.ToArray());
         }
     }

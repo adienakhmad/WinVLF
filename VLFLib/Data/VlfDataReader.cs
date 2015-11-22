@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace VLFLib.Data
 {
@@ -14,7 +11,19 @@ namespace VLFLib.Data
         {
             int n;
             var reader = new StreamReader(filename);
+            // Read title first
             var title = reader.ReadLine();
+
+            // Read position information
+            var location = reader.ReadLine();
+
+            // Parse the position
+            var xya = location.Split(new []{'\t',' '},StringSplitOptions.RemoveEmptyEntries);
+            float x, y, a;
+            float.TryParse(xya[0], out x);
+            float.TryParse(xya[1], out y);
+            float.TryParse(xya[2], out a);
+
             int.TryParse(reader.ReadLine(), out n);
             var distances = new float[n];
             var tiltdata = new float[n];
@@ -43,7 +52,7 @@ namespace VLFLib.Data
                 Debug.WriteLine($"{distances[i]},{tiltdata[i]}");
             }
             var spacing = (distances.Last() - distances.First())/ (n-1);
-            return new TiltData(title, n, spacing, distances, tiltdata);
+            return new TiltData(title, n, spacing,x,y,a, distances, tiltdata);
         }
     }
 }

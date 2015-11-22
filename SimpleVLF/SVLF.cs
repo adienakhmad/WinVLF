@@ -1,7 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,6 +9,7 @@ using Antiufo.Controls;
 using MathNet.Numerics.LinearAlgebra;
 using OxyPlot;
 using OxyPlot.Series;
+using VLFLib;
 using VLFLib.Data;
 using VLFLib.Gridding;
 using VLFLib.Processing;
@@ -23,7 +24,7 @@ namespace SimpleVLF
         public SVLF()
         {
             InitializeComponent();
-            _currentFile = new FileInfo(Application.StartupPath + string.Empty);
+            _currentFile = new FileInfo(Application.StartupPath + "New Project.vlf");
         }
 
         private void SVLF_Load(object sender, EventArgs e)
@@ -48,97 +49,132 @@ namespace SimpleVLF
                 return;
             }
 
-            var newname = FindUniqeName(input.Name, listViewRaw);
+            var newname = FindUniqeName(input.Title, treeViewMain.Nodes[0]);
 
-            var item = new ListViewItem {Text = newname, Name = newname};
-            item.SubItems.Add(input.Npts.ToString());
-            item.SubItems.Add(input.Spacing.ToString(CultureInfo.InvariantCulture));
-            item.Tag = input;
-            if (!input.IsAscending) item.BackColor = Color.Orange;
-            listViewRaw.Items.Add(item);
+            AddNode(newname, treeViewMain.Nodes[0], input);
 
-            var form2 = new ChartPlot(item.Name, input)
+            var form2 = new ChartPlot(newname, input)
             {
                 MdiParent = this
             };
             form2.Show();
         }
 
+        private void AddPlot(TreeNode node)
+        {
+            ChartPlot form2;
+            // DO switch based on the root node index
+            switch (node.Parent.Index)
+            {
+                case 0:
+                    var data = node.Tag as TiltData;
+                    if (data == null) return;
+                    form2 = new ChartPlot(data.Title, data)
+                    {
+                        MdiParent = this
+                    };
+
+                    form2.Show();
+                    break;
+                case 1:
+                    var fdata = node.Tag as FraserData;
+                    if (fdata == null) return;
+                    form2 = new ChartPlot(fdata.Title, fdata)
+                    {
+                        MdiParent = this
+                    };
+
+                    form2.Show();
+                    break;
+                case 2:
+                    var kh = node.Tag as KarousHjeltData;
+                    if (kh != null && kh.RawLength > 150)
+                    {
+                        MessageBox.Show(
+                            @"Due to the limitation of gridding implementation in this version, the filtered result could not be shown. However, you can still export the result into an external file.",
+                            @"Data Too Large To Grid", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+                    tsStatusLabel.Text = @"Building grid..";
+                    krigingProgressBar.Visible = true;
+                    krigingWorker.RunWorkerAsync(kh);
+                    break;
+            }
+        }
+
         private void tsPlotChart_Click(object sender, EventArgs e)
         {
-            if (listViewRaw.Focused)
+            var selectedNode = treeViewMain.SelectedNode;
+            var parent = selectedNode.Parent;
+            if (parent == null)
             {
-                if (listViewRaw.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK,
-                        MessageBoxIcon.Asterisk);
-                    return;
-                }
-
-                var selected = listViewRaw.SelectedItems[0];
-
-                var form2 = new ChartPlot(selected.Name, selected.Tag as TiltData)
-                {
-                    MdiParent = this
-                };
-
-                form2.Show();
+                MessageBox.Show(@"Please select an object to plot", @"Nothing to plot", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
             }
 
-            else if (listViewFraser.Focused)
+            AddPlot(selectedNode);
+        }
+
+        private void tsInterpolate_Click(object sender, EventArgs e)
+        {
+            var selectedNode = treeViewMain.SelectedNode;
+
+            var data = selectedNode.Tag as TiltData;
+            if (data == null) return;
+            var spacing = Convert.ToSingle(Math.Floor(data.Spacing));
+            if (InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new spacing", ref spacing) !=
+                DialogResult.OK)
+                return;
+
+            var npt = Convert.ToInt32(((data.Distances.Max() - data.Distances.Min())/spacing) + 1);
+            if (
+                InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new npts (number of points).",
+                    ref npt) != DialogResult.OK)
+                return;
+
+            if ((data.Distances.Min() + ((npt - 1)*spacing) > data.Distances.Max()))
             {
-                if (listViewFraser.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK,
-                        MessageBoxIcon.Asterisk);
-                    return;
-                }
-
-                var selected = listViewFraser.SelectedItems[0];
-
-                var form2 = new ChartPlot(selected.Name, selected.Tag as FraserData)
-                {
-                    MdiParent = this
-                };
-
-                form2.Show();
+                var dlg =
+                    MessageBox.Show(@"The new interpolated max distances will exceed the original max distances." +
+                                    $"{Environment.NewLine}" +
+                                    $"{Environment.NewLine}Original: {data.Distances.Max()} m, Interpolated: {data.Distances.Min() + ((npt - 1)*spacing)} m." +
+                                    $"{Environment.NewLine}" +
+                                    $"{Environment.NewLine}Do you want to continue?", @"Exceed Original Max Distances",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                Debug.WriteLine((data.Distances.Min() + (npt*spacing)));
+                if (dlg == DialogResult.No) return;
             }
 
-            else if (listViewKH.Focused)
-            {
-                if (listViewKH.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show(@"You have not selected any data.", @"No Data", MessageBoxButtons.OK,
-                        MessageBoxIcon.Asterisk);
-                    return;
-                }
-                var selected = listViewKH.SelectedItems[0];
-                tsStatusLabel.Text = @"Building grid..";
-                krigingProgressBar.Visible = true;
-                krigingWorker.RunWorkerAsync(selected.Tag as KarousHjeltData);
-            }
 
-            else
+            var newname = FindUniqeName($"{data.Title}_Interpolated", treeViewMain.Nodes["NodeTilt"]);
+            if (InputPrompt.InputStringBox("Cubic Spline Interpolation", "Enter a name.", ref newname) !=
+                DialogResult.OK)
+                return;
+
+            var tiltData = VlfInterpolation.CubicSplineNatural(data, Convert.ToSingle(spacing), npt);
+            tiltData.Rename(newname);
+
+            AddNode(newname, treeViewMain.Nodes["NodeTilt"], tiltData);
+
+            var form2 = new ChartPlot(newname, tiltData)
             {
-                MessageBox.Show(@"There is nothing to plot");
-            }
+                MdiParent = this
+            };
+            form2.Show();
         }
 
         private void tsbMovAvg_Click(object sender, EventArgs e)
         {
-            if (!listViewRaw.Focused || listViewRaw.SelectedItems.Count == 0)
-            {
-                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK,
-                    MessageBoxIcon.Asterisk);
-                return;
-            }
+            var selectedNode = treeViewMain.SelectedNode;
+            var parent = treeViewMain.Nodes["NodeTilt"];
 
             var order = 3;
             if (InputPrompt.InputNumberBox("Moving Average Filter", "Filter Order", ref order) != DialogResult.OK)
                 return;
 
 
-            var data = listViewRaw.SelectedItems[0].Tag as TiltData;
+            var data = selectedNode.Tag as TiltData;
             if (data != null && ((Math.Abs(order)) <= 1 || order > data.Npts))
             {
                 MessageBox.Show(@"Invalid filter order.", @"Error");
@@ -146,20 +182,16 @@ namespace SimpleVLF
             }
 
             if (data == null) return;
-            var newname = FindUniqeName($"{data.Name}_MovAvg Order {Convert.ToInt32(order)}", listViewRaw);
+            var newname = FindUniqeName($"{data.Title}_MovAvg Order {Convert.ToInt32(order)}", parent);
             if (InputPrompt.InputStringBox("Moving Average Filter", "Enter a name.", ref newname) != DialogResult.OK)
                 return;
 
             var smooth = VlfFilter.MovingAverage(data, Convert.ToInt32(order));
             smooth.Rename(newname);
 
-            var item = new ListViewItem {Text = newname, Name = newname};
-            item.SubItems.Add(smooth.Npts.ToString());
-            item.SubItems.Add(smooth.Spacing.ToString(CultureInfo.InvariantCulture));
-            item.Tag = smooth;
-            listViewRaw.Items.Add(item);
+            AddNode(newname, parent, smooth);
 
-            var form2 = new ChartPlot(item.Name, smooth)
+            var form2 = new ChartPlot(newname, smooth)
             {
                 MdiParent = this
             };
@@ -168,65 +200,46 @@ namespace SimpleVLF
 
         private void tsFraserFilter_Click(object sender, EventArgs e)
         {
-            if (listViewRaw.SelectedItems.Count == 0)
-            {
-                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK,
-                    MessageBoxIcon.Asterisk);
-                return;
-            }
+            var selectedNode = treeViewMain.SelectedNode;
 
-            var tiltData = listViewRaw.SelectedItems[0].Tag as TiltData;
-            if (tiltData != null && tiltData.Npts < 4)
+            var tiltData = selectedNode.Tag as TiltData;
+            if (tiltData == null) return;
+            if (tiltData.Npts < 4)
             {
                 MessageBox.Show(@"There should be minimum of 4 data for this filter to work.");
                 return;
             }
 
-            var name = FindUniqeName(listViewRaw.SelectedItems[0].Name, listViewFraser);
-            if (InputPrompt.InputStringBox("Fraser Filter", "Enter a name.", ref name) != DialogResult.OK)
+            var uniqeName = FindUniqeName(tiltData.Title, treeViewMain.Nodes["NodeFraser"]);
+            if (InputPrompt.InputStringBox("Fraser Filter", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
 
             // Do Fraser Filtering
             var fraser = VlfFilter.Fraser(tiltData);
-            fraser.Rename(name);
+            fraser.Rename(uniqeName);
 
-            // Create a new listview item to be added to ListViewFraser
-            var item = new ListViewItem
-            {
-                Name = name,
-                Text = name,
-                Tag = fraser
-            };
-
-            item.SubItems.Add(fraser.Npts.ToString());
-            item.SubItems.Add(fraser.Spacing.ToString(CultureInfo.InvariantCulture));
-            listViewFraser.Items.Add(item);
-
-            // end of creating new item to be added to ListViewFraser
+            AddNode(uniqeName, treeViewMain.Nodes["NodeFraser"], fraser);
 
             // Plot the result
-            var form2 = new ChartPlot(item.Name, fraser) {MdiParent = this};
+            var form2 = new ChartPlot(uniqeName, fraser) {MdiParent = this};
             form2.Show();
         }
 
         private void tsKarousHjelt_Click(object sender, EventArgs e)
         {
-            if (listViewRaw.SelectedItems.Count == 0)
-            {
-                MessageBox.Show(@"You have not selected any tilt data.", @"No Data", MessageBoxButtons.OK,
-                    MessageBoxIcon.Asterisk);
-                return;
-            }
+            var selectedNode = treeViewMain.SelectedNode;
 
-            var tiltData = listViewRaw.SelectedItems[0].Tag as TiltData;
-            if (tiltData != null && tiltData.Npts < 6)
+
+            var tiltData = selectedNode.Tag as TiltData;
+            if (tiltData == null) return;
+            if (tiltData.Npts < 6)
             {
                 MessageBox.Show(@"There should be minimum of 7 data for this filter to work.");
                 return;
             }
 
-            var name = FindUniqeName(listViewRaw.SelectedItems[0].Name, listViewKH);
-            if (InputPrompt.InputStringBox("Karous Hjelt-Filter", "Enter a name.", ref name) != DialogResult.OK)
+            var uniqeName = FindUniqeName(tiltData.Title, treeViewMain.Nodes["NodeKH"]);
+            if (InputPrompt.InputStringBox("Karous Hjelt-Filter", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
 
             var skin = 0f;
@@ -236,18 +249,9 @@ namespace SimpleVLF
                 return;
 
             var kh = VlfFilter.KarousHjelt(tiltData, skin);
-            kh.Rename(name);
+            kh.Rename(uniqeName);
 
-            var item = new ListViewItem()
-            {
-                Name = name,
-                Text = name,
-                Tag = kh
-            };
-            item.SubItems.Add((-1*kh.Depths.Min()).ToString(CultureInfo.InvariantCulture));
-            item.SubItems.Add(kh.Spacing.ToString(CultureInfo.InvariantCulture));
-            item.SubItems.Add(kh.SkinDepth.ToString(CultureInfo.InvariantCulture));
-            listViewKH.Items.Add(item);
+            AddNode(uniqeName, treeViewMain.Nodes["NodeKH"], kh);
 
             if (kh.RawLength > 150)
             {
@@ -339,96 +343,9 @@ namespace SimpleVLF
         }
 
 
-        private void listView_KeyDown(object sender, KeyEventArgs e)
-        {
-            var lv = sender as ListView;
-            if (e.KeyCode == Keys.Delete)
-            {
-                if (lv == null) return;
-                foreach (ListViewItem item in lv.SelectedItems)
-                {
-                    lv.Items.Remove(item);
-                }
-            }
-
-            else if (e.Control && e.KeyCode == Keys.A)
-            {
-                if (lv == null) return;
-                foreach (ListViewItem item in lv.Items)
-                {
-                    item.Selected = true;
-                }
-            }
-        }
-
         private void tsmDelete_Click(object sender, EventArgs e)
         {
-            var tsm = sender as ToolStripMenuItem;
-            var cm = tsm?.Owner as ContextMenuStrip;
-            var lv = cm?.SourceControl as ListView;
-
-            if (lv == null) return;
-            foreach (ListViewItem item in lv.SelectedItems)
-            {
-                lv.Items.Remove(item);
-            }
-        }
-
-        private void tsInterpolate_Click(object sender, EventArgs e)
-        {
-            if (!listViewRaw.Focused || listViewRaw.SelectedItems.Count == 0)
-            {
-                MessageBox.Show(@"You have not selected any data.");
-                return;
-            }
-
-            var data = listViewRaw.SelectedItems[0].Tag as TiltData;
-
-            if (data == null) return;
-
-            var spacing = Convert.ToSingle(Math.Floor(data.Spacing));
-            if (InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new spacing", ref spacing) !=
-                DialogResult.OK)
-                return;
-
-            var npt = Convert.ToInt32(((data.Distances.Max() - data.Distances.Min())/spacing) + 1);
-            if (
-                InputPrompt.InputNumberBox("Cubic Spline Interpolation", "Enter the new npts (number of points).",
-                    ref npt) != DialogResult.OK)
-                return;
-
-            if ((data.Distances.Min() + ((npt - 1)*spacing) > data.Distances.Max()))
-            {
-                var dlg =
-                    MessageBox.Show(@"The new interpolated max distances will exceed the original max distances." +
-                                    $"{Environment.NewLine}" +
-                                    $"{Environment.NewLine}Original: {data.Distances.Max()} m, Interpolated: {data.Distances.Min() + ((npt - 1)*spacing)} m." +
-                                    $"{Environment.NewLine}" +
-                                    $"{Environment.NewLine}Do you want to continue?", @"Exceed Original Max Distances",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                Debug.WriteLine((data.Distances.Min() + (npt*spacing)));
-                if (dlg == DialogResult.No) return;
-            }
-
-
-            var newname = FindUniqeName($"{data.Name}_Interpolated", listViewRaw);
-            if (InputPrompt.InputStringBox("Cubic Spline Interpolation", "Enter a name.", ref newname) !=
-                DialogResult.OK)
-                return;
-
-            var tiltData = VlfInterpolation.CubicSplineNatural(data, Convert.ToSingle(spacing), npt);
-            tiltData.Rename(newname);
-            var item = new ListViewItem {Text = newname, Name = newname};
-            item.SubItems.Add(tiltData.Npts.ToString());
-            item.SubItems.Add(tiltData.Spacing.ToString(CultureInfo.InvariantCulture));
-            item.Tag = tiltData;
-            listViewRaw.Items.Add(item);
-
-            var form2 = new ChartPlot(item.Name, tiltData)
-            {
-                MdiParent = this
-            };
-            form2.Show();
+            treeViewMain.SelectedNode.Remove();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -438,34 +355,48 @@ namespace SimpleVLF
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveAsNow();
+        }
+
+        private void SaveAsNow()
+        {
             var dlg = saveProjectDialog.ShowDialog();
             if (dlg != DialogResult.OK) return;
-
-            VlfProjectHandler.Save(SaveProject(saveProjectDialog.FileName), saveProjectDialog.FileName);
+            var projectName = Path.GetFileNameWithoutExtension(saveProjectDialog.FileName);
+            VlfProjectHandler.Save(SaveProject(projectName), saveProjectDialog.FileName);
             _currentFile = new FileInfo(saveProjectDialog.FileName);
             Text = $"WinVLF - [{_currentFile.Name}]";
+            saveProjectDialog.FileName = string.Empty;
             tsStatusLabel.Text = string.Empty;
         }
 
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var saveask = AskIfSaveFirst("opening another project");
+
+            switch (saveask)
+            {
+                case DialogResult.Cancel:
+                    return;
+                case DialogResult.OK:
+                    SaveProjectNow();
+                    break;
+                case DialogResult.No:
+                case DialogResult.Abort:
+                    break;
+            }
+            openProjectDialog.FileName = string.Empty;
             var dlg = openProjectDialog.ShowDialog();
             if (dlg != DialogResult.OK) return;
             LoadProject(VlfProjectHandler.Read(openProjectDialog.FileName));
             _currentFile = new FileInfo(openProjectDialog.FileName);
-            MessageBox.Show(@"Project opened succesfully.", @"Open Project", MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
             tsStatusLabel.Text = string.Empty;
+            treeViewMain.ExpandAll();
         }
 
         private void SVLF_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (listViewRaw.Items.Count == 0 && listViewFraser.Items.Count == 0 && listViewKH.Items.Count == 0)
-            {
-                return;
-            }
-            var dlg = MessageBox.Show(@"Do you want to save before exit?", @"Save before exit",
-                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            var dlg = AskIfSaveFirst("exit");
 
             switch (dlg)
             {
@@ -476,33 +407,30 @@ namespace SimpleVLF
                     SaveProjectNow();
                     break;
                 case DialogResult.No:
+                case DialogResult.Abort:
                     break;
             }
         }
 
         private void closeStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (listViewRaw.Items.Count == 0 && listViewFraser.Items.Count == 0 && listViewKH.Items.Count == 0)
-            {
-                return;
-            }
-            var dlg = MessageBox.Show(@"Do you want to save before closing this project?", @"Save before closing",
-                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            var dlg = AskIfSaveFirst("closing this project");
 
             switch (dlg)
             {
                 case DialogResult.Cancel:
                     break;
-                case DialogResult.OK:
+                case DialogResult.Yes:
                     SaveProjectNow();
                     break;
                 case DialogResult.No:
+                case DialogResult.Abort:
                     CloseProject();
                     break;
             }
         }
 
-        private void krigingWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void krigingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Debug.WriteLine("Starting to do some work");
             var kh = e.Argument as KarousHjeltData;
@@ -571,23 +499,188 @@ namespace SimpleVLF
                 }
             }
 
-            e.Result = new Tuple<HeatMapSeries, string, float>(khmap, kh.Name, kh.SkinDepth);
+            e.Result = new Tuple<HeatMapSeries, string, float, float, float>(khmap, kh.Title, kh.SkinDepth, kh.Spacing,
+                kh.Bearing);
         }
 
-        private void krigingWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        private void krigingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             tsStatusLabel.Text = string.Empty;
             krigingProgressBar.Value = 0;
             krigingProgressBar.Visible = false;
-            var result = e.Result as Tuple<HeatMapSeries, string, float>;
+            var result = e.Result as Tuple<HeatMapSeries, string, float, float, float>;
             if (result == null) return;
-            var form2 = new ChartPlot(result.Item2, result.Item1, result.Item3) {MdiParent = this};
+            var form2 = new ChartPlot(result.Item2, result.Item1, result.Item3, result.Item4, result.Item5)
+            {
+                MdiParent = this
+            };
             form2.Show();
         }
 
-        private void krigingWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        private void krigingWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             krigingProgressBar.Value = e.ProgressPercentage;
+        }
+
+        private void reverseSignToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = treeViewMain.SelectedNode;
+            var parent = treeViewMain.Nodes["NodeTilt"];
+            if (selectedNode.Parent != parent)
+            {
+                MessageBox.Show(@"Please select a tilt profile first.", @"No data", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            var original = selectedNode.Tag as TiltData;
+            if (original == null) return;
+            var tilt = original.Copy();
+
+            var uniqeName = FindUniqeName(tilt.Title + "_reversed", treeViewMain.Nodes["NodeTilt"]);
+            if (InputPrompt.InputStringBox("Reverse Sign", "Enter a name.", ref uniqeName) != DialogResult.OK)
+                return;
+            tilt.Rename(uniqeName);
+            tilt.ReverseSign();
+            AddNode(uniqeName, parent, tilt);
+            var form2 = new ChartPlot(tilt.Title, tilt) {MdiParent = this};
+            form2.Show();
+        }
+
+        private void flipDistanceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = treeViewMain.SelectedNode;
+            var parent = treeViewMain.Nodes["NodeTilt"];
+            if (selectedNode.Parent != parent)
+            {
+                MessageBox.Show(@"Please select a tilt profile first.", @"No data", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            var original = selectedNode.Tag as TiltData;
+            if (original == null) return;
+            var tilt = original.Copy();
+            var uniqeName = FindUniqeName(tilt.Title + "_flipped", treeViewMain.Nodes["NodeTilt"]);
+            tilt.Rename(uniqeName);
+            if (InputPrompt.InputStringBox("Flip Distance", "Enter a name.", ref uniqeName) != DialogResult.OK)
+                return;
+
+            tilt.FlipDistance();
+            AddNode(uniqeName, parent, tilt);
+            var form2 = new ChartPlot(tilt.Title, tilt) {MdiParent = this};
+            form2.Show();
+        }
+
+        private void flipAndReverseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedNode = treeViewMain.SelectedNode;
+            var parent = treeViewMain.Nodes["NodeTilt"];
+            if (selectedNode.Parent != parent)
+            {
+                MessageBox.Show(@"Please select a tilt profile first.", @"No data", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            var original = selectedNode.Tag as TiltData;
+            if (original == null) return;
+            var tilt = original.Copy();
+            var uniqeName = FindUniqeName(tilt.Title + "_flippedreversed", treeViewMain.Nodes["NodeTilt"]);
+            if (InputPrompt.InputStringBox("Flip and Reverse", "Enter a name.", ref uniqeName) != DialogResult.OK)
+                return;
+
+            tilt.Rename(uniqeName);
+            tilt.FlipThenReverse();
+            AddNode(uniqeName, parent, tilt);
+            var form2 = new ChartPlot(tilt.Title, tilt) {MdiParent = this};
+            form2.Show();
+        }
+
+        private void treeViewMain_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Tag == null)
+            {
+                propertyGrid1.SelectedObject = null;
+                SetButtonsEnable(false);
+                return;
+            }
+            SetButtonsEnable(e.Node.Tag.GetType() == typeof (TiltData));
+            propertyGrid1.SelectedObject = e.Node.Tag;
+        }
+
+        private void SetButtonsEnable(bool enable)
+        {
+            tsProcessing.Enabled = enable;
+            ts2DSurface.Enabled = enable;
+            tsInterpolate.Enabled = enable;
+            tsKarousHjelt.Enabled = enable;
+            tsFraserFilter.Enabled = enable;
+            tsbMovAvg.Enabled = enable;
+        }
+
+        private void treeViewMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Delete) return;
+            var topNode = treeViewMain.SelectedNode;
+
+            while (topNode.Parent != null)
+            {
+                topNode = topNode.Parent;
+            }
+
+            if (treeViewMain.SelectedNode != topNode)
+            {
+                treeViewMain.SelectedNode.Remove();
+            }
+        }
+
+        private void treeViewMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Check if the click is a right mouse
+            if (e.Button != MouseButtons.Right) return;
+            // Get the coordinate of the click
+            var p = new Point(e.X, e.Y);
+
+            // Get the node on p coordinate
+            var node = treeViewMain.GetNodeAt(p);
+            // If it is null, get out
+            if (node == null) return;
+
+            // If it is not check if it is the root node
+            // If it is root node, then get out
+            treeViewMain.SelectedNode = node;
+            if (node.Level == 0) return;
+
+            // If it is not, show the context menu
+            cmTreeNode.Show(treeViewMain, p);
+        }
+
+        private void tsmPlot_Click(object sender, EventArgs e)
+        {
+            AddPlot(treeViewMain.SelectedNode);
+        }
+
+        private void tsmExport_Click(object sender, EventArgs e)
+        {
+            var vlfdata = treeViewMain.SelectedNode.Tag as VLFDataBase;
+            if (vlfdata == null) return;
+            switch (treeViewMain.SelectedNode.Parent.Index)
+            {
+                case 0:
+                    exportFileDialog.FileName = $"{vlfdata.Title}_tilt";
+                    break;
+                case 1:
+                    exportFileDialog.FileName = $"{vlfdata.Title}_fraser";
+                    break;
+                case 2:
+                    exportFileDialog.FileName = $"{vlfdata.Title}_kh";
+                    break;
+            }
+
+            var dlg = exportFileDialog.ShowDialog();
+            if (dlg != DialogResult.OK) return;
+            vlfdata.ExportToFile(exportFileDialog.FileName);
         }
     }
 }

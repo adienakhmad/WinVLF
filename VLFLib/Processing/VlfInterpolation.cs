@@ -22,7 +22,7 @@ namespace VLFLib.Processing
                 newtilt[i] = Convert.ToSingle(interpolator.Interpolate(Convert.ToDouble(newdistances[i])));
             }
 
-            return new TiltData(raw.Name,npt,spacing,newdistances,newtilt);
+            return new TiltData(raw.Title,npt,spacing,raw.X,raw.Y,raw.Bearing,newdistances,newtilt);
         }
     }
 }

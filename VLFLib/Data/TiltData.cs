@@ -1,32 +1,46 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using VLFLib.Gridding;
 
 namespace VLFLib.Data
 {
     [Serializable]
     public class TiltData: VLFDataBase
     {
-        
-        public bool IsAscending
+        public TiltData(string title, int n, float spacing, 
+            float xcoor, float ycoor, float azimuth, float[] distanceArray, float[] tiltdata) 
+            :base(title, n,spacing,xcoor,ycoor,azimuth,distanceArray,tiltdata)
         {
-            get
+            
+        }
+
+        public TiltData Copy()
+        {
+            return new TiltData(Title,Npts,Spacing,X,Y,Bearing,Distances.ToArray(),Values.ToArray());
+        }
+        public override void ExportToFile(string filename)
+        {
+            using (var writer = new StreamWriter(filename))
             {
-                for (var i = 0; i < Npts - 1; i++)
+                writer.WriteLine($"WinVLF - VLF Tilt Angle Out File");
+                writer.WriteLine($"{Title}");
+                writer.WriteLine($"npt: {Npts}, bearing: N {Bearing} °E");
+                writer.WriteLine($"distance,tilt-angle,x-coor,y-coor");
+                for (var i = 0; i < Npts; i++)
                 {
-                    if (Distances[i] > Distances[i + 1]) return false;
+                    var xy = Displacement.NextPoint(X, Y, Bearing, (i*Spacing));
+                    writer.WriteLine($"{Distances[i]}\t{Values[i]}\t{xy[0]}\t{xy[1]}");
                 }
-                return true;
             }
         }
 
-        public TiltData(string name, int n, float spacing, float[] distanceArray, float[] tiltdata) :base(name, n,spacing,distanceArray,tiltdata)
+        public override string ToString()
         {
-          
-        }
-
-
-        public override void ExportToFile(string filename)
-        {
-            throw new NotImplementedException();
+            var str = $"Name: {Title}{Environment.NewLine}" +
+                      $"Spacing: {Spacing} m{Environment.NewLine}" +
+                      $"X,Y,a: {X},{Y},{Bearing}";
+            return str;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace SimpleVLF
         public ChartPlot(string title, TiltData data)
         {
             InitializeComponent();
-            plotView1.Model = GraphTilt(title);
+            plotView1.Model = GraphTilt(title,$"dx={data.Spacing} m, N {data.Bearing} °E");
             AddSeries(data);
             Text = $"Real Comp [{title}]";
         }
@@ -26,16 +26,16 @@ namespace SimpleVLF
         public ChartPlot(string title, FraserData data)
         {
             InitializeComponent();
-            plotView1.Model = GraphFraser(title);
+            plotView1.Model = GraphFraser(title, $"dx={data.Spacing} m, N {data.Bearing} °E");
             AddSeries(data);
             Text = $"Fraser [{title}]";
         }
 
-        public ChartPlot(string title, HeatMapSeries khmap, float skin)
+        public ChartPlot(string title, HeatMapSeries khmap, float skin, float dx, float az)
         {
             InitializeComponent();
             Text = $"KH Filter [{title}]";
-            plotView1.Model = HeatMapModel(title, skin);
+            plotView1.Model = HeatMapModel(title, skin, dx, az);
             plotView1.Model.Series.Add(khmap);
             
         }
@@ -77,13 +77,10 @@ namespace SimpleVLF
             plotView1.Model.Series.Add(fraserSeries);
         }
 
-        private static PlotModel HeatMapModel(string title, float skin)
+        private static PlotModel HeatMapModel(string title, float skin, float dx, float az)
         {
-            var subtitle = string.Empty;
-            if (!skin.Equals(0))
-            {
-                subtitle = $"Skin Depth = {skin}m";
-            }
+            var subtitle = $"dx = {dx} m, skin depth = {skin}m, N {az}°E";
+            
             var plotModel1 = new PlotModel
             {
                 PlotType = PlotType.Cartesian,
@@ -129,17 +126,17 @@ namespace SimpleVLF
             return plotModel1;
         }
 
-        private static PlotModel GraphTilt(string title)
+        private static PlotModel GraphTilt(string title, string subtitle)
         {
-            return GraphPaper("Real Comp - " + title, "Tilt Angle", "%");
+            return GraphPaper("Real Comp - " + title, subtitle,"Tilt Angle", "%");
         }
 
-        private static PlotModel GraphFraser(string title)
+        private static PlotModel GraphFraser(string title, string subtitle)
         {
-            return GraphPaper("Fraser - " + title, "Fraser Value", "%");
+            return GraphPaper("Fraser - " + title, subtitle,"Fraser Value", "%");
         }
 
-        private static PlotModel GraphPaper(string title, string ytitle, string yunit)
+        private static PlotModel GraphPaper(string title, string subtitle, string ytitle, string yunit)
         {
             var plotModel1 = new PlotModel
             {
@@ -147,6 +144,8 @@ namespace SimpleVLF
                 Title = title,
                 TitleFont = "Tahoma",
                 TitleFontSize = 12,
+                Subtitle = subtitle,
+                SubtitleFontSize = 10,
                 DefaultFont = "Tahoma",
                 IsLegendVisible = true
             };

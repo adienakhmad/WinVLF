@@ -84,8 +84,6 @@
     <Compile Include="SVLF_helper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VlfProject.cs" />
-    <Compile Include="VlfProjectHandler.cs" />
     <EmbeddedResource Include="ChartPlot.resx">
       <DependentUpon>ChartPlot.cs</DependentUpon>
     </EmbeddedResource>

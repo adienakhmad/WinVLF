@@ -1,29 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 
 namespace VLFLib.Data
 {
-    public  abstract class VLFDataBase
+    [Serializable, DefaultProperty("Title")]
+    public abstract class VLFDataBase
     {
-        public string Name { get; private set; }
-        public int Npts { get; private set; }
-        public float Spacing { get; private set; }
-        public float[] Distances { get; private set; }
-        public float[] Values { get; private set; }
+        [CategoryAttribute("Basic Info"), DescriptionAttribute("Title that will be used to display on plot. Re-plotting is required for the change to take effect.")]
+        public string Title { get; set; }
 
-        protected VLFDataBase(string name, int npt, float spacing, float[] distances, float[] values)
+        [ReadOnlyAttribute(true), CategoryAttribute("Basic Info"), 
+            DescriptionAttribute("The total number of data points in this object.")]
+        public int Npts { get; }
+
+        [ReadOnlyAttribute(true), CategoryAttribute("Basic Info"), 
+            DescriptionAttribute("Interval between data points (in metres).")]
+        public float Spacing { get; private set; }
+
+        [BrowsableAttribute(false)]
+        public float[] Distances { get; private set; }
+
+        [BrowsableAttribute(false)]
+        public float[] Values { get; }
+
+        [CategoryAttribute("Survey Geometry"), DescriptionAttribute("The X-Coordinate (Easting) of the first data point.")]
+        public float X { get; set; }
+
+        [CategoryAttribute("Survey Geometry"), DescriptionAttribute("The Y-Coordinate (Northing) of the first data point.")]
+        public float Y { get; set; }
+
+        [CategoryAttribute("Survey Geometry"), DescriptionAttribute("The direction of profile measured in degree azimuth.")]
+        public float Bearing { get; set; }
+
+        protected VLFDataBase(string title, int npt, float spacing, float x, float y, float a, float[] distances,
+            float[] values)
         {
-            Name = name;
+            Title = title;
             Npts = npt;
             Spacing = spacing;
             Distances = distances;
             Values = values;
+            X = x;
+            Y = y;
+            Bearing = a;
         }
+
         public void Rename(string newname)
         {
-            Name = newname;
+            Title = newname;
         }
 
         public virtual void ReverseSign()
@@ -37,6 +61,14 @@ namespace VLFLib.Data
         public virtual void FlipDistance()
         {
             Array.Reverse(Values);
+            if (Bearing < 180)
+            {
+                Bearing += 180;
+            }
+            else if (Bearing >= 180)
+            {
+                Bearing -= 180;
+            }
         }
 
         public virtual void FlipThenReverse()
@@ -45,7 +77,17 @@ namespace VLFLib.Data
             ReverseSign();
         }
 
-        public abstract void ExportToFile(string filename);
+        public void SetCoordinate(float x, float y)
+        {
+            X = x;
+            Y = y;
+        }
 
+        public void SetAzimuth(float az)
+        {
+            Bearing = az;
+        }
+
+        public abstract void ExportToFile(string filename);
     }
 }

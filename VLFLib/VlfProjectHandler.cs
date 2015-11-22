@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace SimpleVLF
+namespace VLFLib
 {
     public static class VlfProjectHandler
     {
