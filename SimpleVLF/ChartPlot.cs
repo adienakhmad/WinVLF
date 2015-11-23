@@ -4,6 +4,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using VLFLib.Data;
+using VLFLib.Gridding;
 
 namespace WinVLF
 {
@@ -23,6 +24,18 @@ namespace WinVLF
             set { base.Text = value; }
         }
 
+        public ChartPlot(string title, HeatMapSeries surf2d)
+        {
+            InitializeComponent();
+            plotView1.Model = Surf2DModel(title);
+            plotView1.Model.Series.Add(surf2d);
+        }
+
+        private void AddSeries(Surface2D surf)
+        {
+            throw new NotImplementedException();
+        }
+
         public ChartPlot(string title, FraserData data)
         {
             InitializeComponent();
@@ -38,6 +51,52 @@ namespace WinVLF
             plotView1.Model = HeatMapModel(title, skin, dx, az);
             plotView1.Model.Series.Add(khmap);
             
+        }
+
+        private static PlotModel Surf2DModel(string title)
+        {
+            var plotModel1 = new PlotModel
+            {
+                PlotType = PlotType.Cartesian,
+                Title = $"2D Surface - {title}",
+                SubtitleFontSize = 10,
+                TitleFont = "Tahoma",
+                TitleFontSize = 12,
+                DefaultFont = "Tahoma",
+                IsLegendVisible = false
+            };
+
+            var linearColorAxis1 = new LinearColorAxis
+            {
+                Position = AxisPosition.Right,
+                InvalidNumberColor = OxyColors.Transparent,
+                Palette = OxyPalettes.Jet(256)
+            };
+            plotModel1.Axes.Add(linearColorAxis1);
+
+            var linearAxis1 = new LinearAxis
+            {
+                MajorGridlineColor = OxyColor.FromArgb(40, 0, 0, 139),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineColor = OxyColor.FromArgb(20, 0, 0, 139),
+                MinorGridlineStyle = LineStyle.Solid,
+                Position = AxisPosition.Bottom,
+                Title = "Easting",
+                Unit = "m"
+            };
+            plotModel1.Axes.Add(linearAxis1);
+            var linearAxis2 = new LinearAxis
+            {
+                MajorGridlineColor = OxyColor.FromArgb(40, 0, 0, 139),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineColor = OxyColor.FromArgb(20, 0, 0, 139),
+                MinorGridlineStyle = LineStyle.Solid,
+                Title = "Northing",
+                Unit = "m"
+            };
+            plotModel1.Axes.Add(linearAxis2);
+
+            return plotModel1;
         }
 
         private void AddSeries(TiltData data)

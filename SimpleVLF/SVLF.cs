@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -687,6 +688,92 @@ namespace WinVLF
         {
             var box = new AboutBox1();
             box.ShowDialog();
+        }
+
+        private void surf2DWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var data = e.Argument as Surface2D;
+            if (data == null)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(data.XValues,data.YValues);
+            var valueVector = Vector<float>.Build.DenseOfArray(data.ZValues);
+            var vgram = new Powvargram(inputPoints,valueVector);
+            var krig = new Kriging(inputPoints,valueVector,vgram);
+
+            var xmax = data.XValues.Max();
+            var ymax = data.YValues.Max();
+            var xmin = data.XValues.Min();
+            var ymin = data.YValues.Min();
+
+            // Calculate axis range
+            var dx = xmax - xmin;
+            var dy = ymax - ymin;
+
+            // Determine spacing with nx points grid
+            const int nx = 200;
+            var xSpacing = dx / (nx - 1);
+
+            // Determine number of y grid so that the space is equal
+            var ny = Convert.ToInt32(Math.Ceiling(dy / xSpacing));
+            var ySpacing = dy / (ny - 1);
+
+            // Create the heatmap series
+            var surf2D = new HeatMapSeries
+            {
+                X0 = xmin,
+                X1 = xmax,
+                Y0 = ymin,
+                Y1 = ymax,
+                Data = new double[nx, ny],
+                Interpolate = false,
+                CoordinateDefinition = HeatMapCoordinateDefinition.Edge
+            };
+
+            var progress = 0;
+
+            for (var i = 0; i < ny; i++)
+            {
+                for (var j = 0; j < nx; j++)
+                {
+                    progress++;
+                    surf2DWorker.ReportProgress((progress * 100) / (nx * ny));
+                    var point2Interpolate =
+                        Vector<float>.Build.DenseOfArray(new[] { xmin + (j * xSpacing), ymin + (i * ySpacing) });
+                    surf2D.Data[j, i] = krig.Interpolate(point2Interpolate);
+                }
+            }
+
+            e.Result = surf2D;
+        }
+
+        private void surf2DWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var result = e.Result as HeatMapSeries;
+            if (result == null || e.Cancelled) return;
+
+            var form2 = new ChartPlot("sembarang", result)
+            {
+                MdiParent = this
+            };
+
+            form2.ShowDialog();
+
+        }
+
+        private void usingFraserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Collect all tiltdata from treeview and apply filter fraser each and gather them in list
+            ICollection<FraserData> gather = (from TreeNode node in treeViewMain.Nodes["NodeTilt"].Nodes
+                                              select node.Tag 
+                                              as TiltData into tag
+                                              select VlfFilter.Fraser(tag)).ToList();
+            //TODO: finish this 2D Surfacing
+            //var surf2d = new Surface2D(gather);
+            //surf2DWorker.RunWorkerAsync();
         }
     }
 }
