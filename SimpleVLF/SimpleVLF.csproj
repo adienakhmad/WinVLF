@@ -7,8 +7,8 @@
     <ProjectGuid>{59A301E3-A506-4BDC-A298-C2F95175A13A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleVLF</RootNamespace>
-    <AssemblyName>SimpleVLF</AssemblyName>
+    <RootNamespace>WinVLF</RootNamespace>
+    <AssemblyName>WinVLF</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,6 +31,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Flat-Icons.com-Flat-Submarine.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MathNet.Numerics, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -61,6 +64,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutBox1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox1.Designer.cs">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChartPlot.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +93,9 @@
     <Compile Include="SVLF_helper.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="AboutBox1.resx">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ChartPlot.resx">
       <DependentUpon>ChartPlot.cs</DependentUpon>
     </EmbeddedResource>
@@ -201,6 +213,9 @@
   <ItemGroup>
     <None Include="Resources\map--plus.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Flat-Icons.com-Flat-Submarine.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -209,4 +224,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <MoveToLibFolder Include="$(OutputPath)*.dll ; $(OutputPath)*.pdb ; $(OutputPath)*.xml" />
+    </ItemGroup>
+    <Move SourceFiles="@(MoveToLibFolder)" DestinationFolder="$(OutputPath)lib" OverwriteReadOnlyFiles="true" />
+  </Target>
 </Project>

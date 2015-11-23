@@ -5,7 +5,7 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using VLFLib.Data;
 
-namespace SimpleVLF
+namespace WinVLF
 {
     public partial class ChartPlot : Form
     {

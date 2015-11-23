@@ -1,11 +1,15 @@
-﻿namespace SimpleVLF
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using Slusser.Components;
+
+namespace WinVLF
 {
     partial class SVLF
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -120,7 +124,7 @@
             // 
             // tsAddData
             // 
-            this.tsAddData.Image = global::SimpleVLF.Properties.Resources.fill_medium_270;
+            this.tsAddData.Image = global::WinVLF.Properties.Resources.fill_medium_270;
             this.tsAddData.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsAddData.Name = "tsAddData";
             this.tsAddData.Size = new System.Drawing.Size(90, 22);
@@ -134,7 +138,7 @@
             // 
             // tsPlotChart
             // 
-            this.tsPlotChart.Image = global::SimpleVLF.Properties.Resources.system_monitor;
+            this.tsPlotChart.Image = global::WinVLF.Properties.Resources.system_monitor;
             this.tsPlotChart.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsPlotChart.Name = "tsPlotChart";
             this.tsPlotChart.Size = new System.Drawing.Size(48, 22);
@@ -152,7 +156,7 @@
             this.reverseSignToolStripMenuItem,
             this.flipDistanceToolStripMenuItem,
             this.flipAndReverseToolStripMenuItem});
-            this.tsProcessing.Image = global::SimpleVLF.Properties.Resources.chart__arrow;
+            this.tsProcessing.Image = global::WinVLF.Properties.Resources.chart__arrow;
             this.tsProcessing.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsProcessing.Name = "tsProcessing";
             this.tsProcessing.Size = new System.Drawing.Size(103, 22);
@@ -160,7 +164,7 @@
             // 
             // reverseSignToolStripMenuItem
             // 
-            this.reverseSignToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.layer_flip_vertical;
+            this.reverseSignToolStripMenuItem.Image = global::WinVLF.Properties.Resources.layer_flip_vertical;
             this.reverseSignToolStripMenuItem.Name = "reverseSignToolStripMenuItem";
             this.reverseSignToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.reverseSignToolStripMenuItem.Text = "Reverse Sign";
@@ -168,7 +172,7 @@
             // 
             // flipDistanceToolStripMenuItem
             // 
-            this.flipDistanceToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.layer_flip;
+            this.flipDistanceToolStripMenuItem.Image = global::WinVLF.Properties.Resources.layer_flip;
             this.flipDistanceToolStripMenuItem.Name = "flipDistanceToolStripMenuItem";
             this.flipDistanceToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.flipDistanceToolStripMenuItem.Text = "Flip Distance";
@@ -176,7 +180,7 @@
             // 
             // flipAndReverseToolStripMenuItem
             // 
-            this.flipAndReverseToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.task__arrow;
+            this.flipAndReverseToolStripMenuItem.Image = global::WinVLF.Properties.Resources.task__arrow;
             this.flipAndReverseToolStripMenuItem.Name = "flipAndReverseToolStripMenuItem";
             this.flipAndReverseToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.flipAndReverseToolStripMenuItem.Text = "Flip and Reverse";
@@ -184,7 +188,7 @@
             // 
             // tsInterpolate
             // 
-            this.tsInterpolate.Image = global::SimpleVLF.Properties.Resources.function;
+            this.tsInterpolate.Image = global::WinVLF.Properties.Resources.function;
             this.tsInterpolate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsInterpolate.Name = "tsInterpolate";
             this.tsInterpolate.Size = new System.Drawing.Size(84, 22);
@@ -194,7 +198,7 @@
             // 
             // tsbMovAvg
             // 
-            this.tsbMovAvg.Image = global::SimpleVLF.Properties.Resources.script_attribute_m;
+            this.tsbMovAvg.Image = global::WinVLF.Properties.Resources.script_attribute_m;
             this.tsbMovAvg.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbMovAvg.Name = "tsbMovAvg";
             this.tsbMovAvg.Size = new System.Drawing.Size(98, 22);
@@ -204,7 +208,7 @@
             // 
             // tsFraserFilter
             // 
-            this.tsFraserFilter.Image = global::SimpleVLF.Properties.Resources.script_attribute_f;
+            this.tsFraserFilter.Image = global::WinVLF.Properties.Resources.script_attribute_f;
             this.tsFraserFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsFraserFilter.Name = "tsFraserFilter";
             this.tsFraserFilter.Size = new System.Drawing.Size(87, 22);
@@ -214,7 +218,7 @@
             // 
             // tsKarousHjelt
             // 
-            this.tsKarousHjelt.Image = global::SimpleVLF.Properties.Resources.script_attribute_k;
+            this.tsKarousHjelt.Image = global::WinVLF.Properties.Resources.script_attribute_k;
             this.tsKarousHjelt.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsKarousHjelt.Name = "tsKarousHjelt";
             this.tsKarousHjelt.Size = new System.Drawing.Size(120, 22);
@@ -224,7 +228,7 @@
             // 
             // ts2DSurface
             // 
-            this.ts2DSurface.Image = global::SimpleVLF.Properties.Resources.map__plus;
+            this.ts2DSurface.Image = global::WinVLF.Properties.Resources.map__plus;
             this.ts2DSurface.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ts2DSurface.Name = "ts2DSurface";
             this.ts2DSurface.Size = new System.Drawing.Size(92, 22);
@@ -244,7 +248,7 @@
             this.tileHorizontallyToolStripMenuItem1,
             this.tileVerticallyToolStripMenuItem1,
             this.closeAllToolStripMenuItem});
-            this.tsLayout.Image = global::SimpleVLF.Properties.Resources.applications_blue;
+            this.tsLayout.Image = global::WinVLF.Properties.Resources.applications_blue;
             this.tsLayout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsLayout.Name = "tsLayout";
             this.tsLayout.Size = new System.Drawing.Size(72, 22);
@@ -252,7 +256,7 @@
             // 
             // cascadeToolStripMenuItem
             // 
-            this.cascadeToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.applications_stack;
+            this.cascadeToolStripMenuItem.Image = global::WinVLF.Properties.Resources.applications_stack;
             this.cascadeToolStripMenuItem.Name = "cascadeToolStripMenuItem";
             this.cascadeToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.cascadeToolStripMenuItem.Text = "Cascade";
@@ -267,7 +271,7 @@
             // 
             // maximizeAllToolStripMenuItem1
             // 
-            this.maximizeAllToolStripMenuItem1.Image = global::SimpleVLF.Properties.Resources.application_resize_full;
+            this.maximizeAllToolStripMenuItem1.Image = global::WinVLF.Properties.Resources.application_resize_full;
             this.maximizeAllToolStripMenuItem1.Name = "maximizeAllToolStripMenuItem1";
             this.maximizeAllToolStripMenuItem1.Size = new System.Drawing.Size(167, 22);
             this.maximizeAllToolStripMenuItem1.Text = "Maximize All";
@@ -275,7 +279,7 @@
             // 
             // tileHorizontallyToolStripMenuItem1
             // 
-            this.tileHorizontallyToolStripMenuItem1.Image = global::SimpleVLF.Properties.Resources.application_tile_horizontal;
+            this.tileHorizontallyToolStripMenuItem1.Image = global::WinVLF.Properties.Resources.application_tile_horizontal;
             this.tileHorizontallyToolStripMenuItem1.Name = "tileHorizontallyToolStripMenuItem1";
             this.tileHorizontallyToolStripMenuItem1.Size = new System.Drawing.Size(167, 22);
             this.tileHorizontallyToolStripMenuItem1.Text = "Tile Horizontally";
@@ -283,7 +287,7 @@
             // 
             // tileVerticallyToolStripMenuItem1
             // 
-            this.tileVerticallyToolStripMenuItem1.Image = global::SimpleVLF.Properties.Resources.application_tile_vertical;
+            this.tileVerticallyToolStripMenuItem1.Image = global::WinVLF.Properties.Resources.application_tile_vertical;
             this.tileVerticallyToolStripMenuItem1.Name = "tileVerticallyToolStripMenuItem1";
             this.tileVerticallyToolStripMenuItem1.Size = new System.Drawing.Size(167, 22);
             this.tileVerticallyToolStripMenuItem1.Text = "Tile Vertically";
@@ -291,7 +295,7 @@
             // 
             // closeAllToolStripMenuItem
             // 
-            this.closeAllToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.cross_button;
+            this.closeAllToolStripMenuItem.Image = global::WinVLF.Properties.Resources.cross_button;
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
             this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.closeAllToolStripMenuItem.Text = "Close All Window";
@@ -308,7 +312,7 @@
             // 
             // tsmPlot
             // 
-            this.tsmPlot.Image = global::SimpleVLF.Properties.Resources.system_monitor;
+            this.tsmPlot.Image = global::WinVLF.Properties.Resources.system_monitor;
             this.tsmPlot.Name = "tsmPlot";
             this.tsmPlot.Size = new System.Drawing.Size(144, 22);
             this.tsmPlot.Text = "Plot";
@@ -323,7 +327,7 @@
             // 
             // tsmDeleteRaw
             // 
-            this.tsmDeleteRaw.Image = global::SimpleVLF.Properties.Resources.cross_script;
+            this.tsmDeleteRaw.Image = global::WinVLF.Properties.Resources.cross_script;
             this.tsmDeleteRaw.Name = "tsmDeleteRaw";
             this.tsmDeleteRaw.Size = new System.Drawing.Size(144, 22);
             this.tsmDeleteRaw.Text = "Delete";
@@ -356,7 +360,7 @@
             // 
             // openProjectToolStripMenuItem
             // 
-            this.openProjectToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.blue_folder_horizontal_open;
+            this.openProjectToolStripMenuItem.Image = global::WinVLF.Properties.Resources.blue_folder_horizontal_open;
             this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
             this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.openProjectToolStripMenuItem.Text = "Open Project";
@@ -364,7 +368,7 @@
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.disk_black;
+            this.saveToolStripMenuItem.Image = global::WinVLF.Properties.Resources.disk_black;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.saveToolStripMenuItem.Text = "Save";
@@ -372,7 +376,7 @@
             // 
             // saveAsToolStripMenuItem
             // 
-            this.saveAsToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.disks_black;
+            this.saveAsToolStripMenuItem.Image = global::WinVLF.Properties.Resources.disks_black;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.saveAsToolStripMenuItem.Text = "Save Project As...";
@@ -409,10 +413,11 @@
             // 
             // aboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Image = global::SimpleVLF.Properties.Resources.information_balloon;
+            this.aboutToolStripMenuItem.Image = global::WinVLF.Properties.Resources.information_balloon;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // mdiClientController1
             // 
@@ -479,7 +484,7 @@
             this.panel3.Location = new System.Drawing.Point(0, 325);
             this.panel3.Margin = new System.Windows.Forms.Padding(0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(228, 21);
+            this.panel3.Size = new System.Drawing.Size(229, 21);
             this.panel3.TabIndex = 3;
             // 
             // label2
@@ -522,7 +527,7 @@
             this.treeViewMain.ImageIndex = 0;
             this.treeViewMain.ImageList = this.imageListTreeView;
             this.treeViewMain.ItemHeight = 20;
-            this.treeViewMain.Location = new System.Drawing.Point(0, 21);
+            this.treeViewMain.Location = new System.Drawing.Point(-1, 21);
             this.treeViewMain.Margin = new System.Windows.Forms.Padding(0);
             this.treeViewMain.Name = "treeViewMain";
             treeNode1.ImageKey = "book-open-text.png";
@@ -551,7 +556,7 @@
             treeNode3,
             treeNode4});
             this.treeViewMain.SelectedImageIndex = 0;
-            this.treeViewMain.Size = new System.Drawing.Size(228, 304);
+            this.treeViewMain.Size = new System.Drawing.Size(230, 304);
             this.treeViewMain.TabIndex = 0;
             this.treeViewMain.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewMain_AfterSelect);
             this.treeViewMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeViewMain_KeyDown);
@@ -608,6 +613,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tsToolBar);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(1000, 720);
@@ -634,59 +640,59 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip tsToolBar;
-        private System.Windows.Forms.ContextMenuStrip cmTreeNode;
-        private System.Windows.Forms.ToolStripMenuItem tsmPlot;
-        private System.Windows.Forms.ToolStripMenuItem tsmExport;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private Slusser.Components.MdiClientController mdiClientController1;
-        private System.Windows.Forms.ToolStripButton tsAddData;
-        private System.Windows.Forms.ToolStripButton tsPlotChart;
-        private System.Windows.Forms.ToolStripButton tsInterpolate;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripDropDownButton tsLayout;
-        private System.Windows.Forms.ToolStripMenuItem maximizeAllToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem minimizeAllToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem tileHorizontallyToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem tileVerticallyToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem closeAllToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem cascadeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton tsbMovAvg;
-        private System.Windows.Forms.ToolStripButton tsFraserFilter;
-        private System.Windows.Forms.ToolStripButton tsKarousHjelt;
-        private System.Windows.Forms.ToolStripMenuItem tsmDeleteRaw;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.OpenFileDialog importRawDialog;
-        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.OpenFileDialog openProjectDialog;
-        private System.Windows.Forms.SaveFileDialog saveProjectDialog;
-        private System.Windows.Forms.ToolStripStatusLabel tsStatusLabel;
-        private System.Windows.Forms.ToolStripMenuItem closeStripMenuItem;
-        private System.ComponentModel.BackgroundWorker krigingWorker;
-        private System.Windows.Forms.ToolStripProgressBar krigingProgressBar;
-        private System.Windows.Forms.ToolStripDropDownButton tsProcessing;
-        private System.Windows.Forms.ToolStripMenuItem reverseSignToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem flipDistanceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem flipAndReverseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripDropDownButton ts2DSurface;
-        private System.Windows.Forms.TreeView treeViewMain;
-        private System.Windows.Forms.ImageList imageListTreeView;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
-        private System.Windows.Forms.SaveFileDialog exportFileDialog;
+        private ToolStrip tsToolBar;
+        private ContextMenuStrip cmTreeNode;
+        private ToolStripMenuItem tsmPlot;
+        private ToolStripMenuItem tsmExport;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private MdiClientController mdiClientController1;
+        private ToolStripButton tsAddData;
+        private ToolStripButton tsPlotChart;
+        private ToolStripButton tsInterpolate;
+        private Panel panel1;
+        private StatusStrip statusStrip1;
+        private ToolStripDropDownButton tsLayout;
+        private ToolStripMenuItem maximizeAllToolStripMenuItem1;
+        private ToolStripMenuItem minimizeAllToolStripMenuItem1;
+        private ToolStripMenuItem tileHorizontallyToolStripMenuItem1;
+        private ToolStripMenuItem tileVerticallyToolStripMenuItem1;
+        private ToolStripMenuItem closeAllToolStripMenuItem;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem aboutToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripMenuItem cascadeToolStripMenuItem;
+        private ToolStripButton tsbMovAvg;
+        private ToolStripButton tsFraserFilter;
+        private ToolStripButton tsKarousHjelt;
+        private ToolStripMenuItem tsmDeleteRaw;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripSeparator toolStripSeparator3;
+        private OpenFileDialog importRawDialog;
+        private ToolStripMenuItem openProjectToolStripMenuItem;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripMenuItem saveAsToolStripMenuItem;
+        private OpenFileDialog openProjectDialog;
+        private SaveFileDialog saveProjectDialog;
+        private ToolStripStatusLabel tsStatusLabel;
+        private ToolStripMenuItem closeStripMenuItem;
+        private BackgroundWorker krigingWorker;
+        private ToolStripProgressBar krigingProgressBar;
+        private ToolStripDropDownButton tsProcessing;
+        private ToolStripMenuItem reverseSignToolStripMenuItem;
+        private ToolStripMenuItem flipDistanceToolStripMenuItem;
+        private ToolStripMenuItem flipAndReverseToolStripMenuItem;
+        private ToolStripDropDownButton ts2DSurface;
+        private TreeView treeViewMain;
+        private ImageList imageListTreeView;
+        private Panel panel2;
+        private Label label1;
+        private Panel panel3;
+        private Label label2;
+        private PropertyGrid propertyGrid1;
+        private SaveFileDialog exportFileDialog;
     }
 }
 

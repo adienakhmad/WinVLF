@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
 
-namespace SimpleVLF
+namespace WinVLF
 {
     public class InputPrompt
     {

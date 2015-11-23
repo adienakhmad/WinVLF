@@ -14,7 +14,7 @@ using VLFLib.Data;
 using VLFLib.Gridding;
 using VLFLib.Processing;
 
-namespace SimpleVLF
+namespace WinVLF
 {
     public partial class SVLF : Form
     {
@@ -681,6 +681,12 @@ namespace SimpleVLF
             var dlg = exportFileDialog.ShowDialog();
             if (dlg != DialogResult.OK) return;
             vlfdata.ExportToFile(exportFileDialog.FileName);
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var box = new AboutBox1();
+            box.ShowDialog();
         }
     }
 }

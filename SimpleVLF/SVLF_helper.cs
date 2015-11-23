@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using VLFLib;
 using VLFLib.Data;
 
-namespace SimpleVLF
+namespace WinVLF
 {
     public partial class SVLF
     {
