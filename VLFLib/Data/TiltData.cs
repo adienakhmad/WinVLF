@@ -6,7 +6,7 @@ using VLFLib.Gridding;
 namespace VLFLib.Data
 {
     [Serializable]
-    public class TiltData: VLFDataBase
+    public class TiltData: VLFBasicData
     {
         public TiltData(string title, int n, float spacing, 
             float xcoor, float ycoor, float azimuth, float[] distanceArray, float[] tiltdata) 

@@ -4,7 +4,7 @@ using Slusser.Components;
 
 namespace WinVLF
 {
-    partial class SVLF
+    partial class WinVLF
     {
         /// <summary>
         /// Required designer variable.
@@ -33,11 +33,11 @@ namespace WinVLF
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Tilt Profiles");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Fraser Profiles");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("KH Pseudosections");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("2D Surface Maps");
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SVLF));
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Tilt Profiles");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Fraser Profiles");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("KH Pseudosections");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("2D Surface Maps");
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WinVLF));
             this.tsToolBar = new System.Windows.Forms.ToolStrip();
             this.tsAddData = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -52,6 +52,7 @@ namespace WinVLF
             this.tsFraserFilter = new System.Windows.Forms.ToolStripButton();
             this.tsKarousHjelt = new System.Windows.Forms.ToolStripButton();
             this.ts2DSurface = new System.Windows.Forms.ToolStripDropDownButton();
+            this.usingFraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsLayout = new System.Windows.Forms.ToolStripDropDownButton();
             this.cascadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,8 +92,7 @@ namespace WinVLF
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
             this.krigingWorker = new System.ComponentModel.BackgroundWorker();
             this.exportFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.surf2DWorker = new System.ComponentModel.BackgroundWorker();
-            this.usingFraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsToolBar.SuspendLayout();
             this.cmTreeNode.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -238,6 +238,13 @@ namespace WinVLF
             this.ts2DSurface.Size = new System.Drawing.Size(92, 22);
             this.ts2DSurface.Text = "2D Surface";
             // 
+            // usingFraserToolStripMenuItem
+            // 
+            this.usingFraserToolStripMenuItem.Name = "usingFraserToolStripMenuItem";
+            this.usingFraserToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.usingFraserToolStripMenuItem.Text = "Using Fraser";
+            this.usingFraserToolStripMenuItem.Click += new System.EventHandler(this.usingFraserToolStripMenuItem_Click);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -309,10 +316,11 @@ namespace WinVLF
             // 
             this.cmTreeNode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmPlot,
+            this.renameToolStripMenuItem,
             this.tsmExport,
             this.tsmDeleteRaw});
             this.cmTreeNode.Name = "cmListView";
-            this.cmTreeNode.Size = new System.Drawing.Size(145, 70);
+            this.cmTreeNode.Size = new System.Drawing.Size(145, 92);
             // 
             // tsmPlot
             // 
@@ -531,34 +539,35 @@ namespace WinVLF
             this.treeViewMain.ImageIndex = 0;
             this.treeViewMain.ImageList = this.imageListTreeView;
             this.treeViewMain.ItemHeight = 20;
+            this.treeViewMain.LabelEdit = true;
             this.treeViewMain.Location = new System.Drawing.Point(-1, 21);
             this.treeViewMain.Margin = new System.Windows.Forms.Padding(0);
             this.treeViewMain.Name = "treeViewMain";
-            treeNode5.ImageKey = "book-open-text.png";
-            treeNode5.Name = "NodeTilt";
-            treeNode5.SelectedImageKey = "book-open-text.png";
-            treeNode5.Text = "Tilt Profiles";
-            treeNode5.ToolTipText = "Contains tilt profiles object";
-            treeNode6.ImageKey = "chart-up.png";
-            treeNode6.Name = "NodeFraser";
-            treeNode6.SelectedImageKey = "chart-up.png";
-            treeNode6.Text = "Fraser Profiles";
-            treeNode6.ToolTipText = "Contain fraser filtered profile";
-            treeNode7.ImageKey = "layers-stack-arrange.png";
-            treeNode7.Name = "NodeKH";
-            treeNode7.SelectedImageKey = "layers-stack-arrange.png";
-            treeNode7.Text = "KH Pseudosections";
-            treeNode7.ToolTipText = "Contains Pseudosections Objects";
-            treeNode8.ImageKey = "maps.png";
-            treeNode8.Name = "Node2DSurface";
-            treeNode8.SelectedImageKey = "maps.png";
-            treeNode8.Text = "2D Surface Maps";
-            treeNode8.ToolTipText = "Contains 2D Surface Map Objects";
+            treeNode1.ImageKey = "book-open-text.png";
+            treeNode1.Name = "NodeTilt";
+            treeNode1.SelectedImageKey = "book-open-text.png";
+            treeNode1.Text = "Tilt Profiles";
+            treeNode1.ToolTipText = "Contains tilt profiles object";
+            treeNode2.ImageKey = "chart-up.png";
+            treeNode2.Name = "NodeFraser";
+            treeNode2.SelectedImageKey = "chart-up.png";
+            treeNode2.Text = "Fraser Profiles";
+            treeNode2.ToolTipText = "Contain fraser filtered profile";
+            treeNode3.ImageKey = "layers-stack-arrange.png";
+            treeNode3.Name = "NodeKH";
+            treeNode3.SelectedImageKey = "layers-stack-arrange.png";
+            treeNode3.Text = "KH Pseudosections";
+            treeNode3.ToolTipText = "Contains Pseudosections Objects";
+            treeNode4.ImageKey = "maps.png";
+            treeNode4.Name = "Node2DSurface";
+            treeNode4.SelectedImageKey = "maps.png";
+            treeNode4.Text = "2D Surface Maps";
+            treeNode4.ToolTipText = "Contains 2D Surface Map Objects";
             this.treeViewMain.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
             this.treeViewMain.SelectedImageIndex = 0;
             this.treeViewMain.Size = new System.Drawing.Size(230, 304);
             this.treeViewMain.TabIndex = 0;
@@ -584,6 +593,7 @@ namespace WinVLF
             // importRawDialog
             // 
             this.importRawDialog.Filter = "Text Files (*.txt)|*.txt|VLF Files (*.vlf)|*.vlf|Data Files (*.dat)|*.dat";
+            this.importRawDialog.Multiselect = true;
             // 
             // openProjectDialog
             // 
@@ -608,17 +618,12 @@ namespace WinVLF
             this.exportFileDialog.Filter = "Out File (*.out)|*.out";
             this.exportFileDialog.Title = "Export To File";
             // 
-            // surf2DWorker
+            // renameToolStripMenuItem
             // 
-            this.surf2DWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.surf2DWorker_DoWork);
-            this.surf2DWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.surf2DWorker_RunWorkerCompleted);
-            // 
-            // usingFraserToolStripMenuItem
-            // 
-            this.usingFraserToolStripMenuItem.Name = "usingFraserToolStripMenuItem";
-            this.usingFraserToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.usingFraserToolStripMenuItem.Text = "Using Fraser";
-            this.usingFraserToolStripMenuItem.Click += new System.EventHandler(this.usingFraserToolStripMenuItem_Click);
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // SVLF
             // 
@@ -634,6 +639,7 @@ namespace WinVLF
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(1000, 720);
             this.Name = "SVLF";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WinVLF - [New Project 1]";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SVLF_FormClosing);
             this.Load += new System.EventHandler(this.SVLF_Load);
@@ -709,8 +715,8 @@ namespace WinVLF
         private Label label2;
         private PropertyGrid propertyGrid1;
         private SaveFileDialog exportFileDialog;
-        private BackgroundWorker surf2DWorker;
         private ToolStripMenuItem usingFraserToolStripMenuItem;
+        private ToolStripMenuItem renameToolStripMenuItem;
     }
 }
 

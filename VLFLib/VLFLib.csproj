@@ -47,9 +47,9 @@
     <Compile Include="Data\FraserData.cs" />
     <Compile Include="Data\KarousHjeltData.cs" />
     <Compile Include="Data\TiltData.cs" />
-    <Compile Include="Data\VLFDataBase.cs" />
+    <Compile Include="Data\VLFBasicData.cs" />
     <Compile Include="Data\VLFDataReader.cs" />
-    <Compile Include="Gridding\Surface2D.cs" />
+    <Compile Include="Data\Surface2D.cs" />
     <Compile Include="Gridding\Displacement.cs" />
     <Compile Include="Gridding\Kriging.cs" />
     <Compile Include="Gridding\Shepard.cs" />

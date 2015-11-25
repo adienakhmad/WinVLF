@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Windows VLF")]
 [assembly: AssemblyDescription("WinVLF is a software to manage and process VLF-EM survey data for Windows OS." +
-                               "\r\n\r\nThis program is currently in beta version, any bug report would be very much appreciated." +
-                               "\r\nPlease send bug report to adien.akhmad@gmail.com." +
+                               "\r\n\r\nThis version is a first release, so you may encounter some bugs. If you do, " +
+                               "please send a bug report to adien.akhmad@gmail.com. Any bug report would be much appreciated." +
                                "\r\n" +
-                               "\r\nSome icons used here are the work of Yusuke Kamiyamane")]
+                               "\r\nSome icons used here are the work of Yusuke Kamiyamane.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Geophysics Department, Universitas Gadjah Mada")]
+[assembly: AssemblyCompany("Sub-Department of Geophysics, Gadjah Mada University")]
 [assembly: AssemblyProduct("Windows VLF")]
 [assembly: AssemblyCopyright("Copyright ©  Adien Akhmad 2015")]
 [assembly: AssemblyTrademark("")]
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

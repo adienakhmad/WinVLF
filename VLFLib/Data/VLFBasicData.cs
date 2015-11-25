@@ -4,9 +4,9 @@ using System.ComponentModel;
 namespace VLFLib.Data
 {
     [Serializable, DefaultProperty("Title")]
-    public abstract class VLFDataBase
+    public abstract class VLFBasicData
     {
-        [CategoryAttribute("Basic Info"), DescriptionAttribute("Title that will be used to display on plot. Re-plotting is required for the change to take effect.")]
+        [CategoryAttribute("Basic Info"), DescriptionAttribute("Title that will be used to display on plot. Re-plotting is required.")]
         public string Title { get; set; }
 
         [ReadOnlyAttribute(true), CategoryAttribute("Basic Info"), 
@@ -32,7 +32,7 @@ namespace VLFLib.Data
         [CategoryAttribute("Survey Geometry"), DescriptionAttribute("The direction of profile measured in degree azimuth.")]
         public float Bearing { get; set; }
 
-        protected VLFDataBase(string title, int npt, float spacing, float x, float y, float a, float[] distances,
+        protected VLFBasicData(string title, int npt, float spacing, float x, float y, float a, float[] distances,
             float[] values)
         {
             Title = title;

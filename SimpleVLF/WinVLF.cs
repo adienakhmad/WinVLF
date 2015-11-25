@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Antiufo.Controls;
 using MathNet.Numerics.LinearAlgebra;
-using OxyPlot;
 using OxyPlot.Series;
 using VLFLib;
 using VLFLib.Data;
@@ -17,12 +16,12 @@ using VLFLib.Processing;
 
 namespace WinVLF
 {
-    public partial class SVLF : Form
+    public partial class WinVLF : Form
     {
         public static int Count;
         private static FileInfo _currentFile;
 
-        public SVLF()
+        public WinVLF()
         {
             InitializeComponent();
             _currentFile = new FileInfo(Application.StartupPath + "New Project.vlf");
@@ -38,27 +37,43 @@ namespace WinVLF
         {
             var dlg = importRawDialog.ShowDialog();
             if (dlg != DialogResult.OK) return;
-            TiltData input;
 
-            try
+            var errcount = 0;
+
+            for (var i = 0; i < importRawDialog.FileNames.Length; i++)
             {
-                input = VLFDataReader.Read(importRawDialog.FileName);
+                TiltData input = null;
+                try
+                {
+                    input = VLFDataReader.Read(importRawDialog.FileNames[i]);
+                }
+                catch (Exception)
+                {
+                    errcount++;
+                }
+                finally
+                {
+                    if (input != null)
+                    {
+                        var newname = FindUniqeName(input.Title, treeViewMain.Nodes[0]);
+
+                        AddNode(newname, treeViewMain.Nodes[0], input);
+
+                        var form2 = new ChartPlot(newname, input)
+                        {
+                            MdiParent = this
+                        };
+                        form2.Show();
+                    }
+                }
             }
-            catch (Exception)
+
+            if (errcount > 0)
             {
-                MessageBox.Show(@"An error has occured on your file. Please check your file.");
-                return;
+                MessageBox.Show(
+                    $"The file(s) you are trying to import encountered an error.{Environment.NewLine}[Failed: {errcount} files, Success: {importRawDialog.FileNames.Length - errcount} files]",
+                    @"Import Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
-            var newname = FindUniqeName(input.Title, treeViewMain.Nodes[0]);
-
-            AddNode(newname, treeViewMain.Nodes[0], input);
-
-            var form2 = new ChartPlot(newname, input)
-            {
-                MdiParent = this
-            };
-            form2.Show();
         }
 
         private void AddPlot(TreeNode node)
@@ -96,9 +111,11 @@ namespace WinVLF
                             @"Data Too Large To Grid", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
-                    tsStatusLabel.Text = @"Building grid..";
-                    krigingProgressBar.Visible = true;
-                    krigingWorker.RunWorkerAsync(kh);
+                    StartGriddingWorker(new Surface2D(kh));
+                    break;
+                case 3:
+                    var surfdata = node.Tag as Surface2D;
+                    StartGriddingWorker(surfdata);
                     break;
             }
         }
@@ -230,7 +247,6 @@ namespace WinVLF
         {
             var selectedNode = treeViewMain.SelectedNode;
 
-
             var tiltData = selectedNode.Tag as TiltData;
             if (tiltData == null) return;
             if (tiltData.Npts < 6)
@@ -257,13 +273,11 @@ namespace WinVLF
             if (kh.RawLength > 150)
             {
                 MessageBox.Show(
-                    @"Due to the limitation of gridding implementation in this version, the filtered result could not be shown. However, you can still export the result into an external file.",
+                    @"Due to the limitation of gridding implementation in this version, the pseudosection could not be shown. However, you can still export the result into an external file.",
                     @"Data Too Large To Grid", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            tsStatusLabel.Text = @"Building grid..";
-            krigingProgressBar.Visible = true;
-            krigingWorker.RunWorkerAsync(kh);
+            StartGriddingWorker(new Surface2D(kh));
         }
 
         private void maximizeAllToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -433,89 +447,65 @@ namespace WinVLF
 
         private void krigingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            Debug.WriteLine("Starting to do some work");
-            var kh = e.Argument as KarousHjeltData;
-            if (kh == null) return;
-            Debug.WriteLine($"Will process {kh.Values.Length} datas");
+            var surface2D = e.Argument as Surface2D;
+            if (surface2D == null)
+            {
+                e.Cancel = true;
+                return;
+            }
 
-            // Preparing Matrix Object
-            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(kh.Distances, kh.Depths);
-            var valueVector = Vector<float>.Build.DenseOfArray(kh.Values);
-
+            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(surface2D.XValues, surface2D.YValues);
+            var valueVector = Vector<float>.Build.DenseOfArray(surface2D.ZValues);
             var vgram = new Powvargram(inputPoints, valueVector);
-            Debug.WriteLine("Done with variogram");
             var krig = new Kriging(inputPoints, valueVector, vgram);
-            Debug.WriteLine("Done with kriging");
 
-            //var krig = new Shepard(inputPoints,valueVector);
-
-
-            var xmax = kh.Distances.Max();
-            var xmin = kh.Distances.Min();
-            var ymax = kh.Depths.Max();
-            var ymin = kh.Depths.Min();
-
-            // Calculate axis range
-            var dx = xmax - xmin;
-            var dy = Math.Abs(Math.Abs(ymax) - Math.Abs(ymin));
-
-
-            // Determine spacing with nx points grid
-            const int nx = 200;
-            var xSpacing = dx/(nx - 1);
-
-            // Determine number of y grid so that the space is equal
-            var ny = Convert.ToInt32(Math.Ceiling(dy/xSpacing));
-            var ySpacing = dy/(ny - 1);
-
-            Debug.WriteLine($"{nx} {ny} {xSpacing} {ySpacing}");
-
+            var xmin = surface2D.XValues.Min();
+            var ymin = surface2D.YValues.Min();
 
             // Create the heatmap series
-
-            var khmap = new HeatMapSeries
+            var surfMap = new HeatMapSeries
             {
-                X0 = kh.Distances.Min(),
-                X1 = kh.Distances.Max(),
-                Y0 = kh.Depths.Max(),
-                Y1 = kh.Depths.Min(),
-                Data = new double[nx, ny],
+                X0 = surface2D.XValues.Min(),
+                X1 = surface2D.XValues.Max(),
+                Y0 = surface2D.YValues.Min(),
+                Y1 = surface2D.YValues.Max(),
+                Data = new double[surface2D.Nx, surface2D.Ny],
                 Interpolate = false,
                 CoordinateDefinition = HeatMapCoordinateDefinition.Edge
             };
 
-            int progress = 0;
+            var progress = 0;
 
-            khmap.Data.Fill2D(double.NaN);
-            // Filling the data by interpolating using kriging
-            for (var i = 0; i < ny; i++)
+            for (var i = 0; i < surface2D.Ny; i++)
             {
-                for (var j = 0; j < nx; j++)
+                for (var j = 0; j < surface2D.Nx; j++)
                 {
                     progress++;
-                    krigingWorker.ReportProgress((progress*100)/(nx*ny));
+                    krigingWorker.ReportProgress((progress*100)/(surface2D.Nx*surface2D.Ny));
                     var point2Interpolate =
-                        Vector<float>.Build.DenseOfArray(new[] {xmin + (j*xSpacing), ymax - (i*ySpacing)});
-                    khmap.Data[j, i] = krig.Interpolate(point2Interpolate);
+                        Vector<float>.Build.DenseOfArray(new[] {xmin + (j*surface2D.Dx), ymin + (i*surface2D.Dy)});
+                    surfMap.Data[j, i] = krig.Interpolate(point2Interpolate);
                 }
             }
 
-            e.Result = new Tuple<HeatMapSeries, string, float, float, float>(khmap, kh.Title, kh.SkinDepth, kh.Spacing,
-                kh.Bearing);
+            var result = new Tuple<HeatMapSeries, Surface2D>(surfMap, surface2D);
+            e.Result = result;
         }
 
         private void krigingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            tsStatusLabel.Text = string.Empty;
-            krigingProgressBar.Value = 0;
-            krigingProgressBar.Visible = false;
-            var result = e.Result as Tuple<HeatMapSeries, string, float, float, float>;
-            if (result == null) return;
-            var form2 = new ChartPlot(result.Item2, result.Item1, result.Item3, result.Item4, result.Item5)
+            var result = e.Result as Tuple<HeatMapSeries, Surface2D>;
+            if (result == null || e.Cancelled) return;
+
+            var form2 = new ChartPlot(result.Item1, result.Item2)
             {
                 MdiParent = this
             };
+
             form2.Show();
+            tsStatusLabel.Text = string.Empty;
+            krigingProgressBar.Visible = false;
+            krigingProgressBar.Value = 0;
         }
 
         private void krigingWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -527,12 +517,6 @@ namespace WinVLF
         {
             var selectedNode = treeViewMain.SelectedNode;
             var parent = treeViewMain.Nodes["NodeTilt"];
-            if (selectedNode.Parent != parent)
-            {
-                MessageBox.Show(@"Please select a tilt profile first.", @"No data", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
-            }
 
             var original = selectedNode.Tag as TiltData;
             if (original == null) return;
@@ -552,12 +536,6 @@ namespace WinVLF
         {
             var selectedNode = treeViewMain.SelectedNode;
             var parent = treeViewMain.Nodes["NodeTilt"];
-            if (selectedNode.Parent != parent)
-            {
-                MessageBox.Show(@"Please select a tilt profile first.", @"No data", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
-            }
 
             var original = selectedNode.Tag as TiltData;
             if (original == null) return;
@@ -577,12 +555,6 @@ namespace WinVLF
         {
             var selectedNode = treeViewMain.SelectedNode;
             var parent = treeViewMain.Nodes["NodeTilt"];
-            if (selectedNode.Parent != parent)
-            {
-                MessageBox.Show(@"Please select a tilt profile first.", @"No data", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
-            }
 
             var original = selectedNode.Tag as TiltData;
             if (original == null) return;
@@ -613,7 +585,6 @@ namespace WinVLF
         private void SetButtonsEnable(bool enable)
         {
             tsProcessing.Enabled = enable;
-            ts2DSurface.Enabled = enable;
             tsInterpolate.Enabled = enable;
             tsKarousHjelt.Enabled = enable;
             tsFraserFilter.Enabled = enable;
@@ -622,17 +593,24 @@ namespace WinVLF
 
         private void treeViewMain_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Delete) return;
             var topNode = treeViewMain.SelectedNode;
-
+            
             while (topNode.Parent != null)
             {
                 topNode = topNode.Parent;
             }
 
-            if (treeViewMain.SelectedNode != topNode)
+            if (treeViewMain.SelectedNode == topNode) return;
+
+            switch (e.KeyCode)
             {
-                treeViewMain.SelectedNode.Remove();
+                case Keys.Delete:
+                    treeViewMain.SelectedNode.Remove();
+                    break;
+
+                case Keys.F2:
+                    treeViewMain.SelectedNode.BeginEdit();
+                    break;
             }
         }
 
@@ -664,7 +642,7 @@ namespace WinVLF
 
         private void tsmExport_Click(object sender, EventArgs e)
         {
-            var vlfdata = treeViewMain.SelectedNode.Tag as VLFDataBase;
+            var vlfdata = treeViewMain.SelectedNode.Tag as VLFBasicData;
             if (vlfdata == null) return;
             switch (treeViewMain.SelectedNode.Parent.Index)
             {
@@ -690,90 +668,40 @@ namespace WinVLF
             box.ShowDialog();
         }
 
-        private void surf2DWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var data = e.Argument as Surface2D;
-            if (data == null)
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            var inputPoints = Matrix<float>.Build.DenseOfColumnArrays(data.XValues,data.YValues);
-            var valueVector = Vector<float>.Build.DenseOfArray(data.ZValues);
-            var vgram = new Powvargram(inputPoints,valueVector);
-            var krig = new Kriging(inputPoints,valueVector,vgram);
-
-            var xmax = data.XValues.Max();
-            var ymax = data.YValues.Max();
-            var xmin = data.XValues.Min();
-            var ymin = data.YValues.Min();
-
-            // Calculate axis range
-            var dx = xmax - xmin;
-            var dy = ymax - ymin;
-
-            // Determine spacing with nx points grid
-            const int nx = 200;
-            var xSpacing = dx / (nx - 1);
-
-            // Determine number of y grid so that the space is equal
-            var ny = Convert.ToInt32(Math.Ceiling(dy / xSpacing));
-            var ySpacing = dy / (ny - 1);
-
-            // Create the heatmap series
-            var surf2D = new HeatMapSeries
-            {
-                X0 = xmin,
-                X1 = xmax,
-                Y0 = ymin,
-                Y1 = ymax,
-                Data = new double[nx, ny],
-                Interpolate = false,
-                CoordinateDefinition = HeatMapCoordinateDefinition.Edge
-            };
-
-            var progress = 0;
-
-            for (var i = 0; i < ny; i++)
-            {
-                for (var j = 0; j < nx; j++)
-                {
-                    progress++;
-                    surf2DWorker.ReportProgress((progress * 100) / (nx * ny));
-                    var point2Interpolate =
-                        Vector<float>.Build.DenseOfArray(new[] { xmin + (j * xSpacing), ymin + (i * ySpacing) });
-                    surf2D.Data[j, i] = krig.Interpolate(point2Interpolate);
-                }
-            }
-
-            e.Result = surf2D;
-        }
-
-        private void surf2DWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            var result = e.Result as HeatMapSeries;
-            if (result == null || e.Cancelled) return;
-
-            var form2 = new ChartPlot("sembarang", result)
-            {
-                MdiParent = this
-            };
-
-            form2.ShowDialog();
-
-        }
-
         private void usingFraserToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var nodes =
+                (from TreeNode node in treeViewMain.Nodes["NodeTilt"].Nodes select (TreeNode) node.Clone()).ToList();
+            var form2 = new TreeInput(nodes);
+            var dlg = form2.ShowDialog();
+            if (dlg != DialogResult.OK) return;
+
+            var nodeName = "Untitled";
+            if (InputPrompt.InputStringBox("2D Surface", "Enter a name.", ref nodeName) != DialogResult.OK)
+                return;
+
             // Collect all tiltdata from treeview and apply filter fraser each and gather them in list
-            ICollection<FraserData> gather = (from TreeNode node in treeViewMain.Nodes["NodeTilt"].Nodes
-                                              select node.Tag 
-                                              as TiltData into tag
-                                              select VlfFilter.Fraser(tag)).ToList();
+            IList<TiltData> gather =
+                (from TreeNode node in form2.treeView1.Nodes where node.Checked select node.Tag as TiltData).ToList();
+
             //TODO: finish this 2D Surfacing
-            //var surf2d = new Surface2D(gather);
-            //surf2DWorker.RunWorkerAsync();
+            var surf2D = new Surface2D(gather, Surface2D.FilterType.Fraser)
+            {
+                Title = nodeName,
+                XAxisTitle = "Easting",
+                YAxisTitle = "Northing",
+                XUnit = "m",
+                YUnit = "m"
+            };
+
+            nodeName = FindUniqeName(nodeName, treeViewMain.Nodes["Node2DSurface"]);
+            StartGriddingWorker(surf2D);
+            AddNode(nodeName, treeViewMain.Nodes["Node2DSurface"], surf2D);
+        }
+
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            treeViewMain.SelectedNode.BeginEdit();
         }
     }
 }

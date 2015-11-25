@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +10,7 @@ using VLFLib.Data;
 
 namespace WinVLF
 {
-    public partial class SVLF
+    public partial class WinVLF
     {
         private static string FindUniqeName(string originalName, TreeNode node)
         {
@@ -29,20 +30,32 @@ namespace WinVLF
         private void LoadProject(VlfProject proj)
         {
             CloseProject();
+            var count = 0;
+
+            // Load all data as node tag object, without names.
 
             foreach (var tiltData in proj.TiltDatas)
             {
-                AddNode(tiltData.Title, treeViewMain.Nodes["NodeTilt"], tiltData);
+                AddNode(proj.NodeNames[count], treeViewMain.Nodes["NodeTilt"], tiltData);
+                count++;
             }
 
             foreach (var fraserData in proj.FraserDatas)
             {
-                AddNode(fraserData.Title, treeViewMain.Nodes["NodeFraser"], fraserData);
+                AddNode(proj.NodeNames[count], treeViewMain.Nodes["NodeFraser"], fraserData);
+                count++;
             }
 
             foreach (var karousHjeltData in proj.KarousHjeltDatas)
             {
-                AddNode(karousHjeltData.Title, treeViewMain.Nodes["NodeKH"], karousHjeltData);
+                AddNode(proj.NodeNames[count], treeViewMain.Nodes["NodeKH"], karousHjeltData);
+                count++;
+            }
+
+            foreach (var surf2D in proj.Surface2DDatas)
+            {
+                AddNode(proj.NodeNames[count], treeViewMain.Nodes["Node2DSurface"], surf2D);
+                count++;
             }
 
             Text = $"WinVLF - [{proj.Name}]";
@@ -50,13 +63,19 @@ namespace WinVLF
 
         private VlfProject SaveProject(string name)
         {
+            var nodeNames =
+                (from TreeNode rootNode in treeViewMain.Nodes
+                    from TreeNode childNode in rootNode.Nodes
+                    select childNode.Name).ToList();
             ICollection<TiltData> tiltDatas =
                 (from TreeNode node in treeViewMain.Nodes["NodeTilt"].Nodes select node.Tag as TiltData).ToList();
             ICollection<FraserData> fraserDatas =
                 (from TreeNode node in treeViewMain.Nodes["NodeFraser"].Nodes select node.Tag as FraserData).ToList();
             ICollection<KarousHjeltData> khDatas =
                 (from TreeNode node in treeViewMain.Nodes["NodeKH"].Nodes select node.Tag as KarousHjeltData).ToList();
-            return new VlfProject(name, 100, tiltDatas, fraserDatas, khDatas);
+            ICollection<Surface2D> surfDatas =
+                (from TreeNode node in treeViewMain.Nodes["Node2DSurface"].Nodes select node.Tag as Surface2D).ToList();
+            return new VlfProject(name, 101, nodeNames, tiltDatas, fraserDatas, khDatas, surfDatas);
         }
 
         private void SaveProjectNow()
@@ -90,7 +109,7 @@ namespace WinVLF
             treeViewMain.Nodes[1].Nodes.Clear();
             treeViewMain.Nodes[2].Nodes.Clear();
             treeViewMain.Nodes[3].Nodes.Clear();
-
+            _currentFile = new FileInfo(Application.StartupPath + "New Project.vlf");
             Text = $"WinVLF - [New Project 1]";
             propertyGrid1.SelectedObject = null;
         }
@@ -119,6 +138,13 @@ namespace WinVLF
             var dlg = MessageBox.Show($"Do you want to save first before {prompt}?", $"Save before {prompt} ",
                 MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             return dlg;
+        }
+
+        private void StartGriddingWorker(Surface2D surf)
+        {
+            tsStatusLabel.Text = @"Building grid..";
+            krigingProgressBar.Visible = true;
+            krigingWorker.RunWorkerAsync(surf);
         }
     }
 }

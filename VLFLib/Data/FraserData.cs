@@ -5,7 +5,7 @@ using VLFLib.Gridding;
 namespace VLFLib.Data
 {
     [Serializable]
-    public class FraserData : VLFDataBase
+    public class FraserData : VLFBasicData
     {
         
         internal FraserData(string title, int count, float spacing, float x, float y, float a, float[] distances, float[] fraserValue): base(title,count,spacing,x,y,a,distances,fraserValue)

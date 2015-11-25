@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 
 namespace VLFLib.Gridding
 {
@@ -11,6 +9,8 @@ namespace VLFLib.Gridding
         {
             var newx = x + (Math.Sin(ToRadian(a))*dist);
             var newy = y + (Math.Cos(ToRadian(a))*dist);
+
+            Debug.WriteLine($"{Math.Sin(ToRadian(a))},{Math.Cos(ToRadian(a))},{newx},{newy},{Convert.ToSingle(newx)},{Convert.ToSingle(newy)}");
 
             return new[] {Convert.ToSingle(newx), Convert.ToSingle(newy)};
         }

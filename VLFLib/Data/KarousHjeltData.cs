@@ -6,7 +6,7 @@ using VLFLib.Gridding;
 namespace VLFLib.Data
 {
     [Serializable]
-    public class KarousHjeltData:VLFDataBase
+    public class KarousHjeltData:VLFBasicData
     {
         [BrowsableAttribute(false)]
         public int RawLength { get; private set; }

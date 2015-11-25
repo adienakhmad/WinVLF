@@ -13,7 +13,7 @@ namespace WinVLF
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new SVLF());
+            Application.Run(new WinVLF());
         }
     }
 }

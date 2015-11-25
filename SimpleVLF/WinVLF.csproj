@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WinVLF</RootNamespace>
-    <AssemblyName>WinVLF</AssemblyName>
+    <AssemblyName>winvlf</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -82,16 +82,22 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SVLF.cs">
+    <Compile Include="WinVLF.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SVLF.Designer.cs">
-      <DependentUpon>SVLF.cs</DependentUpon>
+    <Compile Include="WinVLF.Designer.cs">
+      <DependentUpon>WinVLF.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SVLF_helper.cs">
+    <Compile Include="WinVLF_helper.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TreeInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TreeInput.Designer.cs">
+      <DependentUpon>TreeInput.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
@@ -104,8 +110,11 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SVLF.resx">
-      <DependentUpon>SVLF.cs</DependentUpon>
+    <EmbeddedResource Include="WinVLF.resx">
+      <DependentUpon>WinVLF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TreeInput.resx">
+      <DependentUpon>TreeInput.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />

@@ -18,8 +18,8 @@ namespace WinVLF
             label.Text = promptText;
             textBox.Text = value;
 
-            buttonOk.Text = "OK";
-            buttonCancel.Text = "Cancel";
+            buttonOk.Text = @"OK";
+            buttonCancel.Text = @"Cancel";
             buttonOk.DialogResult = DialogResult.OK;
             buttonCancel.DialogResult = DialogResult.Cancel;
 
@@ -64,8 +64,8 @@ namespace WinVLF
             numBox.DecimalPlaces = 2;
 
 
-            buttonOk.Text = "OK";
-            buttonCancel.Text = "Cancel";
+            buttonOk.Text = @"OK";
+            buttonCancel.Text = @"Cancel";
             buttonOk.DialogResult = DialogResult.OK;
             buttonCancel.DialogResult = DialogResult.Cancel;
 
@@ -114,8 +114,8 @@ namespace WinVLF
             numBox.TextAlign = HorizontalAlignment.Right;
 
 
-            buttonOk.Text = "OK";
-            buttonCancel.Text = "Cancel";
+            buttonOk.Text = @"OK";
+            buttonCancel.Text = @"Cancel";
             buttonOk.DialogResult = DialogResult.OK;
             buttonCancel.DialogResult = DialogResult.Cancel;
 
