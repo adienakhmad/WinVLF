@@ -32,7 +32,7 @@ namespace VLFLib.Data
             for (var i = 0; i < n; i++)
             {
                 var s = reader.ReadLine();
-                var ss = s.Split('\t');
+                var ss = s.Split(new []{'\t',' '},StringSplitOptions.RemoveEmptyEntries);
                 float dist, val;
                 float.TryParse(ss[0], out dist);
                 float.TryParse(ss[1], out val);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using VLFLib.Gridding;
 
 namespace VLFLib.Data
 {
@@ -61,6 +62,10 @@ namespace VLFLib.Data
         public virtual void FlipDistance()
         {
             Array.Reverse(Values);
+            var xy = Displacement.NextPoint(X, Y, Bearing, (Npts - 1) * Spacing);
+            X = xy[0];
+            Y = xy[1];
+
             if (Bearing < 180)
             {
                 Bearing += 180;
@@ -77,17 +82,6 @@ namespace VLFLib.Data
             ReverseSign();
         }
 
-        public void SetCoordinate(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public void SetAzimuth(float az)
-        {
-            Bearing = az;
-        }
-
-        public abstract void ExportToFile(string filename);
+       public abstract void ExportToFile(string filename);
     }
 }

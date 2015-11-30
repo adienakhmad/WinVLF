@@ -63,6 +63,7 @@ namespace WinVLF
             this.closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmTreeNode = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmPlot = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmExport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmDeleteRaw = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -92,7 +93,6 @@ namespace WinVLF
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
             this.krigingWorker = new System.ComponentModel.BackgroundWorker();
             this.exportFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsToolBar.SuspendLayout();
             this.cmTreeNode.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -177,7 +177,7 @@ namespace WinVLF
             this.flipDistanceToolStripMenuItem.Image = global::WinVLF.Properties.Resources.layer_flip;
             this.flipDistanceToolStripMenuItem.Name = "flipDistanceToolStripMenuItem";
             this.flipDistanceToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
-            this.flipDistanceToolStripMenuItem.Text = "Flip Distance";
+            this.flipDistanceToolStripMenuItem.Text = "Flip Profile";
             this.flipDistanceToolStripMenuItem.Click += new System.EventHandler(this.flipDistanceToolStripMenuItem_Click);
             // 
             // flipAndReverseToolStripMenuItem
@@ -329,6 +329,13 @@ namespace WinVLF
             this.tsmPlot.Size = new System.Drawing.Size(144, 22);
             this.tsmPlot.Text = "Plot";
             this.tsmPlot.Click += new System.EventHandler(this.tsmPlot_Click);
+            // 
+            // renameToolStripMenuItem
+            // 
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // tsmExport
             // 
@@ -592,18 +599,21 @@ namespace WinVLF
             // 
             // importRawDialog
             // 
-            this.importRawDialog.Filter = "Text Files (*.txt)|*.txt|VLF Files (*.vlf)|*.vlf|Data Files (*.dat)|*.dat";
+            this.importRawDialog.Filter = "Text Files (*.txt)|*.txt|Data Files (*.dat)|*.dat";
             this.importRawDialog.Multiselect = true;
+            this.importRawDialog.Title = "Import Data";
             // 
             // openProjectDialog
             // 
             this.openProjectDialog.DefaultExt = "vlfproj";
-            this.openProjectDialog.Filter = "VLF Project Files (*.vlfproj)|*.vlfproj";
+            this.openProjectDialog.Filter = "WinVLF Project Files (*.wvlf)|*.wvlf";
+            this.openProjectDialog.Title = "Open WinVLF Project";
             // 
             // saveProjectDialog
             // 
             this.saveProjectDialog.DefaultExt = "vlfproj";
-            this.saveProjectDialog.Filter = "VLF Project Files (*.vlfproj)|*.vlfproj";
+            this.saveProjectDialog.Filter = "WinVLF Project Files (*.wvlf)|*.wvlf";
+            this.saveProjectDialog.Title = "Save Project As";
             // 
             // krigingWorker
             // 
@@ -618,14 +628,7 @@ namespace WinVLF
             this.exportFileDialog.Filter = "Out File (*.out)|*.out";
             this.exportFileDialog.Title = "Export To File";
             // 
-            // renameToolStripMenuItem
-            // 
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
-            this.renameToolStripMenuItem.Text = "Rename";
-            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
-            // 
-            // SVLF
+            // WinVLF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -638,7 +641,7 @@ namespace WinVLF
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(1000, 720);
-            this.Name = "SVLF";
+            this.Name = "WinVLF";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WinVLF - [New Project 1]";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SVLF_FormClosing);

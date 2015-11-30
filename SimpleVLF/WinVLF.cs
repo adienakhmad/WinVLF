@@ -40,12 +40,12 @@ namespace WinVLF
 
             var errcount = 0;
 
-            for (var i = 0; i < importRawDialog.FileNames.Length; i++)
+            foreach (var t in importRawDialog.FileNames)
             {
                 TiltData input = null;
                 try
                 {
-                    input = VLFDataReader.Read(importRawDialog.FileNames[i]);
+                    input = VLFDataReader.Read(t);
                 }
                 catch (Exception)
                 {
@@ -55,11 +55,12 @@ namespace WinVLF
                 {
                     if (input != null)
                     {
-                        var newname = FindUniqeName(input.Title, treeViewMain.Nodes[0]);
+                        var safename = Path.GetFileNameWithoutExtension(t);
+                        var newname = FindUniqeName(safename, treeViewMain.Nodes[0]);
 
                         AddNode(newname, treeViewMain.Nodes[0], input);
 
-                        var form2 = new ChartPlot(newname, input)
+                        var form2 = new ChartPlot(input.Title, input)
                         {
                             MdiParent = this
                         };
@@ -165,7 +166,7 @@ namespace WinVLF
             }
 
 
-            var newname = FindUniqeName($"{data.Title}_Interpolated", treeViewMain.Nodes["NodeTilt"]);
+            var newname = FindUniqeName($"{selectedNode.Name}_Interpolated", treeViewMain.Nodes["NodeTilt"]);
             if (InputPrompt.InputStringBox("Cubic Spline Interpolation", "Enter a name.", ref newname) !=
                 DialogResult.OK)
                 return;
@@ -200,7 +201,7 @@ namespace WinVLF
             }
 
             if (data == null) return;
-            var newname = FindUniqeName($"{data.Title}_MovAvg Order {Convert.ToInt32(order)}", parent);
+            var newname = FindUniqeName($"{selectedNode.Name}_MovAvg Order {Convert.ToInt32(order)}", parent);
             if (InputPrompt.InputStringBox("Moving Average Filter", "Enter a name.", ref newname) != DialogResult.OK)
                 return;
 
@@ -228,7 +229,7 @@ namespace WinVLF
                 return;
             }
 
-            var uniqeName = FindUniqeName(tiltData.Title, treeViewMain.Nodes["NodeFraser"]);
+            var uniqeName = FindUniqeName(selectedNode.Name, treeViewMain.Nodes["NodeFraser"]);
             if (InputPrompt.InputStringBox("Fraser Filter", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
 
@@ -255,7 +256,7 @@ namespace WinVLF
                 return;
             }
 
-            var uniqeName = FindUniqeName(tiltData.Title, treeViewMain.Nodes["NodeKH"]);
+            var uniqeName = FindUniqeName(selectedNode.Name, treeViewMain.Nodes["NodeKH"]);
             if (InputPrompt.InputStringBox("Karous Hjelt-Filter", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
 
@@ -522,7 +523,7 @@ namespace WinVLF
             if (original == null) return;
             var tilt = original.Copy();
 
-            var uniqeName = FindUniqeName(tilt.Title + "_reversed", treeViewMain.Nodes["NodeTilt"]);
+            var uniqeName = FindUniqeName(selectedNode.Name + "_reversed", treeViewMain.Nodes["NodeTilt"]);
             if (InputPrompt.InputStringBox("Reverse Sign", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
             tilt.Rename(uniqeName);
@@ -540,7 +541,7 @@ namespace WinVLF
             var original = selectedNode.Tag as TiltData;
             if (original == null) return;
             var tilt = original.Copy();
-            var uniqeName = FindUniqeName(tilt.Title + "_flipped", treeViewMain.Nodes["NodeTilt"]);
+            var uniqeName = FindUniqeName(selectedNode.Name + "_flipped", treeViewMain.Nodes["NodeTilt"]);
             tilt.Rename(uniqeName);
             if (InputPrompt.InputStringBox("Flip Distance", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
@@ -559,7 +560,7 @@ namespace WinVLF
             var original = selectedNode.Tag as TiltData;
             if (original == null) return;
             var tilt = original.Copy();
-            var uniqeName = FindUniqeName(tilt.Title + "_flippedreversed", treeViewMain.Nodes["NodeTilt"]);
+            var uniqeName = FindUniqeName(selectedNode.Name + "_flippedreversed", treeViewMain.Nodes["NodeTilt"]);
             if (InputPrompt.InputStringBox("Flip and Reverse", "Enter a name.", ref uniqeName) != DialogResult.OK)
                 return;
 

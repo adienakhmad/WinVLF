@@ -40,14 +40,14 @@ namespace WinVLF
             InitializeComponent();
             if (data.GetType() == typeof (TiltData))
             {
-                plotView1.Model = GraphPaper("Real Comp - " + title, $"dx: {data.Spacing} m, N {data.Bearing} °E",
-                    "Tilt Angle", "%");
+                plotView1.Model = GraphPaper(title, $"dx: {data.Spacing} m, N {data.Bearing} °E",
+                    "Tilt", "%");
                 AddSeries(data,OxyColors.DarkOrange);
-                Text = $"Real Comp [{title}]";
+                Text = $"Tilt [{title}]";
             }
             else
             {
-                plotView1.Model = GraphPaper("Fraser - " + title, $"dx: {data.Spacing} m, N {data.Bearing} °E",
+                plotView1.Model = GraphPaper(title, $"dx: {data.Spacing} m, N {data.Bearing} °E",
                     "Fraser Value", "%");
                 AddSeries(data,OxyColors.MidnightBlue);
                 Text = $"Fraser [{title}]";
