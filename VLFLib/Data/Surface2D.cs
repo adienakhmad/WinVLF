@@ -65,7 +65,8 @@ namespace VLFLib.Data
         [Browsable(false)]
         public SurfaceType SurfType { get; }
 
-        [Browsable(false)]
+        [ReadOnly(true), Category("Basic Info"),
+         Description("The filter type used to create this map.")]
         public FilterType FiltType { get; private set; }
 
 
@@ -108,6 +109,37 @@ namespace VLFLib.Data
             YValues = kh.Depths.ToArray();
             ZValues = kh.Values.ToArray();
             Npts = kh.Npts;
+            CalcGridSize();
+        }
+
+        private void BuildUsingKH(IList<TiltData> tilts)
+        {
+            FiltType = FilterType.KarousHjelt;
+            ZAxisTitle = "KH";
+            ZUnit = "%";
+            var x = new List<float>();
+            var y = new List<float>();
+            var z = new List<float>();
+
+            foreach (var kh in tilts.Select(tilt => VlfFilter.KarousHjelt(tilt, 0, 1)))
+            {
+                for (var i = 0; i < kh.Npts; i++)
+                {
+                    var xy = Displacement.NextPoint(kh.X, kh.Y, kh.Bearing, kh.Spacing*(i - 1));
+                    x.Add(xy[0]);
+                    y.Add(xy[1]);
+                    z.Add(kh.Values[i]);
+                }
+            }
+            Npts = x.Count;
+            XValues = new float[x.Count];
+            YValues = new float[y.Count];
+            ZValues = new float[z.Count];
+
+            XValues = x.ToArray();
+            YValues = y.ToArray();
+            ZValues = z.ToArray();
+
             CalcGridSize();
         }
 
@@ -174,14 +206,6 @@ namespace VLFLib.Data
             }
         }
 
-        private void BuildUsingKH(ICollection<TiltData> tilts)
-        {
-            FiltType = FilterType.KarousHjelt;
-            ZAxisTitle = "KH";
-            ZUnit = "%";
-            throw new NotImplementedException();
-        }
-
         public enum FilterType
         {
             Fraser,
@@ -198,7 +222,7 @@ namespace VLFLib.Data
         {
             using (var writer = new StreamWriter(filename))
             {
-                writer.WriteLine($"WinVLF - Surface 2D Out File");
+                writer.WriteLine($"WinVLF - Surface 2D Out File Using {FiltType}");
                 writer.WriteLine($"{Title}");
                 writer.WriteLine($"npt: {Npts}");
                 writer.WriteLine($"X,Y,value");

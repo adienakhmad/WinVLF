@@ -1,23 +1,22 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using VLFLib.Gridding;
 
 namespace VLFLib.Data
 {
     [Serializable]
     public class KarousHjeltData:VLFBasicData
     {
-        [BrowsableAttribute(false)]
+        [Browsable(false)]
         public int RawLength { get; private set; }
-        [BrowsableAttribute(false)]
+        [Browsable(false)]
         public bool IsNormalized { get; private set; }
-        [DescriptionAttribute("Electromagnetic skin depth used to normalize this pseudosection."),CategoryAttribute("Enhancement")]
-        public float SkinDepth { get; private set; }
-        [BrowsableAttribute(false)]
+        [Description("Electromagnetic skin depth used to normalize this pseudosection."),Category("Enhancement")]
+        public float SkinDepth { get; }
+        [Browsable(false)]
         public int DepthLevel { get; private set; }
-        [BrowsableAttribute(false)]
-        public float[] Depths { get; private set; }
+        [Browsable(false)]
+        public float[] Depths { get; }
 
         
         public KarousHjeltData(string title, float spacing, int rawlength, float skindepth, int dlevel,float x, float y, float a, float[] distArray, float[] depths,

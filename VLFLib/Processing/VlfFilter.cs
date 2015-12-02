@@ -16,12 +16,12 @@ namespace VLFLib.Processing
             var movDistance = new float[npt -fLen];
             var movVal = new float[npt- fLen];
 
-            for (int i = 0; i < npt-fLen; i++)
+            for (var i = 0; i < npt-fLen; i++)
             {
                 var dist = new float[order];
                 var val = new float[order];
 
-                for (int j = 0; j < order; j++)
+                for (var j = 0; j < order; j++)
                 {
                     dist[j] = raw.Distances[i+j];
                     val[j] = raw.Values[i + j];
@@ -66,6 +66,11 @@ namespace VLFLib.Processing
 
         public static KarousHjeltData KarousHjelt(TiltData raw, float skindepth)
         {
+            return KarousHjelt(raw, skindepth, 0);
+        }
+
+        public static KarousHjeltData KarousHjelt(TiltData raw, float skindepth, int step)
+        {
             var distList = new List<float>();
             var depthList = new List<float>();
             var khList = new List<float>();
@@ -78,7 +83,16 @@ namespace VLFLib.Processing
 
             var x0 = raw.Distances[0];
             var n = raw.Npts;
-            var depthStep = n/6;
+            int depthStep;
+
+            if (step == 0 || step > (n/6))
+            {
+                depthStep = n/6;
+            }
+            else
+            {
+                depthStep = step;
+            }
 
             for (var i = 0; i < depthStep; i++)
             {
