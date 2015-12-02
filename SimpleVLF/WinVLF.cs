@@ -644,23 +644,35 @@ namespace WinVLF
         private void tsmExport_Click(object sender, EventArgs e)
         {
             var vlfdata = treeViewMain.SelectedNode.Tag as VLFBasicData;
-            if (vlfdata == null) return;
-            switch (treeViewMain.SelectedNode.Parent.Index)
+            if (vlfdata != null)
             {
-                case 0:
-                    exportFileDialog.FileName = $"{vlfdata.Title}_tilt";
-                    break;
-                case 1:
-                    exportFileDialog.FileName = $"{vlfdata.Title}_fraser";
-                    break;
-                case 2:
-                    exportFileDialog.FileName = $"{vlfdata.Title}_kh";
-                    break;
-            }
+                switch (treeViewMain.SelectedNode.Parent.Index)
+                {
+                    case 0:
+                        exportFileDialog.FileName = $"{treeViewMain.SelectedNode.Name}_tilt";
+                        break;
+                    case 1:
+                        exportFileDialog.FileName = $"{treeViewMain.SelectedNode.Name}_fraser";
+                        break;
+                    case 2:
+                        exportFileDialog.FileName = $"{treeViewMain.SelectedNode.Name}_kh";
+                        break;
+                }
 
-            var dlg = exportFileDialog.ShowDialog();
-            if (dlg != DialogResult.OK) return;
-            vlfdata.ExportToFile(exportFileDialog.FileName);
+                var dlg = exportFileDialog.ShowDialog();
+                if (dlg != DialogResult.OK) return;
+                vlfdata.ExportToFile(exportFileDialog.FileName);
+            }
+            else
+            {
+                var surface2D = treeViewMain.SelectedNode.Tag as Surface2D;
+                if (surface2D == null) return;
+                exportFileDialog.FileName = $"{treeViewMain.SelectedNode.Name}_2dmap";
+                var dlg = exportFileDialog.ShowDialog();
+                if (dlg != DialogResult.OK) return;
+                surface2D.ExportToFile(exportFileDialog.FileName);
+            }
+            
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

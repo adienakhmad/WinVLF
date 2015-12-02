@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using VLFLib.Gridding;
 using VLFLib.Processing;
@@ -191,6 +192,21 @@ namespace VLFLib.Data
         {
             Pseudosections,
             Surface
+        }
+
+        public void ExportToFile(string filename)
+        {
+            using (var writer = new StreamWriter(filename))
+            {
+                writer.WriteLine($"WinVLF - Surface 2D Out File");
+                writer.WriteLine($"{Title}");
+                writer.WriteLine($"npt: {Npts}");
+                writer.WriteLine($"X,Y,value");
+                for (var i = 0; i < Npts; i++)
+                {
+                    writer.WriteLine($"{XValues[i]}\t{YValues[i]}\t{ZValues[i]}");
+                }
+            }
         }
     }
 }
